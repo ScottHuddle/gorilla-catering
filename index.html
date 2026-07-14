@@ -581,7 +581,7 @@
           <textarea id="notes" placeholder="Allergies, intolerances, or anything else we should know…"></textarea>
           <div style="margin-top:8px;padding:8px 12px;background:var(--cream);border-left:3px solid var(--navy);display:flex;align-items:center;justify-content:space-between;gap:12px;">
             <span style="font-size:11px;color:var(--label);">Please review our full allergen information before ordering.</span>
-            <a href="allergens.html" target="_blank"
+            <a href="https://scotthuddle.github.io/gorilla-catering/allergens.html" target="_blank"
                style="font-size:11px;font-weight:600;color:var(--navy);text-decoration:none;white-space:nowrap;border-bottom:1px solid var(--navy);padding-bottom:1px;">
               View Allergen Sheet →
             </a>
@@ -1564,6 +1564,22 @@ function submitOrder() {
     if (state.cakeMessage && anyUncut) cakeLines.push(`Message: "${state.cakeMessage}"`);
     items.push({ type: 'cake', label: 'Celebration Cakes', lines: cakeLines });
   }
+
+  // ── Calculate totals ───────────────────────────────────────────────────────
+  let subtotal = 0;
+  ['breakfast','lunch','lunch2','afternoon'].forEach(m => {
+    subtotal += state.counts[m] * MENUS[m].price;
+    state.customers[m].forEach(c => { if (c.selections['extras']) subtotal += 2.50; });
+  });
+  Object.entries(state.alacarte).filter(([,q])=>q>0).forEach(([k,q])=>{ subtotal += q * ALACARTE[k].price; });
+  state.saladRegPlatters.forEach(b => { if (b.extras && b.extras !== 'None') subtotal += 5 * 2.50; });
+  state.saladLrgPlatters.forEach(b => { if (b.extras && b.extras !== 'None') subtotal += 10 * 2.50; });
+  subtotal += state.celebCakes.length * 55.00;
+  const qualifiesDiscount = subtotal >= 200;
+  const discount = qualifiesDiscount ? subtotal * 0.10 : 0;
+  const discountedSub = subtotal - discount;
+  const vat = discountedSub * 0.20;
+  const totalInc = discountedSub * 1.20;
 
   const payload = {
     company, contact, email, date, time, notes, orderRef, items,
