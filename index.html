@@ -1629,12 +1629,17 @@ function submitOrder() {
   // GF entry field mapping — keys are Gravity Forms field IDs
   // IMPORTANT: replace the numbers on the left with your actual GF field IDs
   // Find them by editing each field in GF and checking "Field ID" in the sidebar
+  // Convert time to 12hr format for GF time field
+  const [hrs, mins] = time.split(':');
+  const h = parseInt(hrs);
+  const gfTime = `${h % 12 || 12}:${mins} ${h >= 12 ? 'PM' : 'AM'}`;
+
   const gfBody = new URLSearchParams({
     input_1:  company,
     input_3:  contact,
     input_4:  email,
     input_5:  date,
-    input_6:  time,
+    input_6:  gfTime,
     input_7:  orderSummary,
     input_8:  notes,
     input_9:  orderRef,
