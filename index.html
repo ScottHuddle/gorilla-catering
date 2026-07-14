@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gorilla Café – Office Catering</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0f1f3d;
+    --navy-mid: #1a3060;
+    --navy-light: #2a4a7a;
+    --gold: #f5c842;
+    --gold-dark: #d4a820;
+    --steel: #9ab5d4;
+    --pale: #c8d8e8;
+    --cream: #f7f5f0;
+    --rule: #d8d2c8;
+    --label: #6b7b9a;
+    --error: #c0392b;
+    --success: #27ae60;
+    --white: #ffffff;
+    --text: #0f1f3d;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--navy);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 3px solid var(--gold);
+  }
+  .site-header .cafe-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.01em;
+  }
+  .site-header .form-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--steel);
+    margin-left: auto;
+  }
+
+  /* ── Layout ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 68px);
+  }
+
+  /* ── Main form area ── */
+  .form-main {
+    padding: 32px 40px;
+    border-right: 1px solid var(--rule);
+  }
+
+  /* ── Section ── */
+  .section { margin-bottom: 36px; }
+
+  .section-eyebrow {
+    background: var(--navy);
+    color: var(--steel);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 7px 12px;
+    margin-bottom: 0;
+  }
+
+  /* ── Your Details ── */
+  .details-grid {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-top: none;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 24px;
+  }
+  .details-grid .field-full { grid-column: 1 / -1; }
+
+  .field label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-bottom: 5px;
+  }
+  .field input, .field textarea, .field select {
+    width: 100%;
+    border: none;
+    border-bottom: 1.5px solid var(--navy);
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--navy);
+    padding: 4px 0;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-bottom-color: var(--gold-dark);
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 56px;
+    border: 1.5px solid var(--rule);
+    border-radius: 2px;
+    padding: 8px;
+    background: var(--white);
+  }
+  .field textarea:focus { border-color: var(--gold-dark); }
+
+  /* ── Policy strip ── */
+  .policy-strip {
+    background: var(--navy-mid);
+    padding: 12px 20px;
+    margin-bottom: 28px;
+    border-left: 3px solid var(--gold);
+  }
+  .policy-strip p {
+    font-size: 11px;
+    color: var(--pale);
+    line-height: 1.7;
+  }
+  .policy-strip a { color: var(--gold); text-decoration: none; }
+
+  /* ── Set menu selector ── */
+  .menu-selector {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-top: none;
+    padding: 16px 20px 20px;
+    margin-bottom: 2px;
+  }
+
+  .menu-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 16px;
+  }
+  .menu-tab {
+    flex: 1;
+    padding: 10px 8px;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--label);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .menu-tab:hover { background: var(--pale); color: var(--navy); }
+  .menu-tab.active {
+    background: var(--navy);
+    color: var(--gold);
+    border-color: var(--navy);
+  }
+
+  .menu-panel { display: none; }
+  .menu-panel.active { display: block; }
+
+  /* ── Gold set menu pill ── */
+  .set-menu-info {
+    background: var(--gold);
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .set-menu-info .set-name {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .set-menu-info .set-price {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+  .set-menu-info .set-desc {
+    font-size: 11px;
+    color: var(--navy-mid);
+    flex: 1;
+  }
+
+  /* ── Headcount ── */
+  .headcount-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .headcount-row label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .headcount-controls {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1.5px solid var(--navy);
+  }
+  .headcount-btn {
+    width: 32px;
+    height: 32px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    line-height: 1;
+    transition: background 0.1s;
+  }
+  .headcount-btn:hover { background: var(--navy-light); }
+  .headcount-display {
+    width: 44px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    border: none;
+    border-left: 1px solid var(--navy);
+    border-right: 1px solid var(--navy);
+    background: var(--white);
+    padding: 6px 0;
+  }
+  .headcount-min {
+    font-size: 11px;
+    color: var(--label);
+    margin-left: 4px;
+  }
+
+  /* ── Customer cards ── */
+  .customers-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .customer-card {
+    border: 1px solid var(--rule);
+    background: var(--cream);
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .customer-card:focus-within { border-color: var(--navy); }
+
+  .customer-header {
+    background: var(--navy);
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .customer-num {
+    width: 22px;
+    height: 22px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    flex-shrink: 0;
+  }
+  .customer-name-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(154,181,212,0.4);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 4px;
+    outline: none;
+    flex: 1;
+    min-width: 0;
+  }
+  .customer-name-input::placeholder { color: var(--steel); }
+  .customer-name-input:focus { border-bottom-color: var(--gold); }
+
+  .customer-body {
+    padding: 12px 14px;
+    display: grid;
+    gap: 10px;
+  }
+
+  /* Lunch has 3 cols, breakfast/afternoon vary */
+  .customer-body.lunch-grid { grid-template-columns: 1fr 1fr 1fr; }
+  .customer-body.breakfast-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .customer-body.afternoon-grid { grid-template-columns: 1fr 1fr; }
+
+  .customer-select-wrap label {
+    display: block;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-bottom: 4px;
+  }
+  .customer-select-wrap select {
+    width: 100%;
+    padding: 7px 28px 7px 10px;
+    border: 1.5px solid var(--rule);
+    border-radius: 0;
+    background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%230f1f3d'/%3E%3C/svg%3E") no-repeat right 10px center;
+    -webkit-appearance: none;
+    appearance: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--navy);
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .customer-select-wrap select:focus { border-color: var(--navy); }
+  .customer-select-wrap select.placeholder { color: var(--label); }
+
+  /* ── À la carte items (non-set) ── */
+  .alacarte-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+  }
+  .alacarte-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-bottom: 12px;
+  }
+  .alacarte-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+  }
+  .alacarte-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border: 1px solid var(--rule);
+    background: var(--white);
+  }
+  .alacarte-item-info { font-size: 12px; color: var(--navy); font-weight: 500; }
+  .alacarte-item-price { font-size: 11px; color: var(--label); margin-top: 1px; }
+  .alacarte-qty {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .alacarte-qty button {
+    width: 24px; height: 24px;
+    background: var(--navy); color: var(--white);
+    border: none; cursor: pointer;
+    font-size: 14px; font-family: 'Inter', sans-serif;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .alacarte-qty span {
+    width: 20px; text-align: center;
+    font-size: 13px; font-weight: 600; color: var(--navy);
+  }
+
+  /* ── Extras (for lunch) ── */
+  .extras-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* ── Submit ── */
+  .submit-row {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  .btn-submit {
+    width: 100%;
+    padding: 14px 24px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-submit:hover { background: var(--navy-light); }
+  .btn-submit:disabled { background: var(--label); cursor: not-allowed; }
+
+  /* ── Order summary sidebar ── */
+  .order-sidebar {
+    background: var(--navy);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-header {
+    background: var(--navy-mid);
+    padding: 16px 20px;
+    border-bottom: 2px solid var(--gold);
+    flex-shrink: 0;
+  }
+  .sidebar-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--white);
+    font-weight: 600;
+  }
+  .sidebar-header p { font-size: 11px; color: var(--steel); margin-top: 2px; }
+
+  .sidebar-body { padding: 16px 20px; flex: 1; }
+
+  .summary-empty {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--steel);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .summary-empty .icon { font-size: 32px; margin-bottom: 10px; opacity: 0.5; }
+
+  .summary-section { margin-bottom: 20px; }
+  .summary-section-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--steel);
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(154,181,212,0.2);
+  }
+
+  .summary-customer { margin-bottom: 10px; }
+  .summary-customer-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 3px;
+  }
+  .summary-customer-item {
+    font-size: 11px;
+    color: var(--pale);
+    line-height: 1.6;
+    padding-left: 8px;
+    border-left: 2px solid rgba(245,200,66,0.3);
+  }
+
+  .summary-totals {
+    border-top: 1px solid rgba(154,181,212,0.2);
+    padding-top: 14px;
+    margin-top: 14px;
+  }
+  .summary-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .summary-total-row .t-label { font-size: 11px; color: var(--steel); }
+  .summary-total-row .t-val { font-size: 12px; color: var(--pale); font-weight: 500; }
+  .summary-total-row.grand .t-label { font-size: 12px; color: var(--white); font-weight: 600; }
+  .summary-total-row.grand .t-val {
+    font-size: 16px;
+    color: var(--gold);
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .order-sidebar {
+      position: static;
+      height: auto;
+      order: -1;
+    }
+    .form-main { padding: 20px; border-right: none; }
+    .customer-body.lunch-grid { grid-template-columns: 1fr 1fr; }
+    .customer-body.breakfast-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 580px) {
+    .customer-body.lunch-grid,
+    .customer-body.breakfast-grid,
+    .customer-body.afternoon-grid { grid-template-columns: 1fr; }
+    .menu-tabs { flex-wrap: wrap; }
+    .details-grid { grid-template-columns: 1fr; }
+    .details-grid .field-full { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="cafe-name">The Gorilla Café</div>
+  <div class="form-label">Office Catering</div>
+</header>
+
+<div class="layout">
+
+  <!-- ── FORM ── -->
+  <main class="form-main">
+
+    <!-- Your Details -->
+    <div class="section">
+      <div class="section-eyebrow">Your Details</div>
+      <div class="details-grid">
+        <div class="field">
+          <label>Company / Office</label>
+          <input type="text" id="company" placeholder="e.g. Acme Ltd" autocomplete="organization">
+        </div>
+        <div class="field">
+          <label>Contact Name</label>
+          <input type="text" id="contact" placeholder="Your name" autocomplete="name">
+        </div>
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="you@company.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Date Required</label>
+          <input type="date" id="date-required">
+        </div>
+        <div class="field">
+          <label>Time Required</label>
+          <input type="time" id="time-required">
+        </div>
+        <div class="field field-full">
+          <label>Dietary Requirements & Special Notes</label>
+          <textarea id="notes" placeholder="Allergies, intolerances, or anything else we should know…"></textarea>
+          <div style="margin-top:8px;padding:8px 12px;background:var(--cream);border-left:3px solid var(--navy);display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <span style="font-size:11px;color:var(--label);">Please review our full allergen information before ordering.</span>
+            <a href="https://scotthuddle.github.io/gorilla-catering/allergens.html" target="_blank"
+               style="font-size:11px;font-weight:600;color:var(--navy);text-decoration:none;white-space:nowrap;border-bottom:1px solid var(--navy);padding-bottom:1px;">
+              View Allergen Sheet →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Policy strip -->
+    <div class="policy-strip">
+      <p>Available Mon–Fri 8:30am–3pm &nbsp;·&nbsp; Minimum 48 hours notice &nbsp;·&nbsp; All prices exclude VAT</p>
+      <p style="margin-top:4px">Modifications can be made up until 48 hours before the event. Cancellations within 48 hours will be charged at 50%.</p>
+      <p style="margin-top:4px">All food will be served in disposable or compostable packaging.</p>
+    </div>
+
+    <!-- Menu selector -->
+    <div class="section">
+      <div class="section-eyebrow">Your Order</div>
+
+      <div class="menu-selector">
+        <!-- Tabs -->
+        <div class="menu-tabs">
+          <button class="menu-tab active" onclick="switchTab('breakfast', this)">Breakfast</button>
+          <button class="menu-tab" onclick="switchTab('lunch', this)">Lunch</button>
+          <button class="menu-tab" onclick="switchTab('afternoon', this)">Afternoon</button>
+          <button class="menu-tab" onclick="switchTab('occasions', this)">Special Occasions</button>
+        </div>
+
+        <!-- ══ BREAKFAST ══ -->
+        <div class="menu-panel active" id="panel-breakfast">
+          <div class="set-menu-info">
+            <div>
+              <div class="set-name">Breakfast Set Menu</div>
+              <div class="set-desc">Tea & coffee, fresh fruit juice & any large pastry &nbsp;·&nbsp; Served as individual portions</div>
+            </div>
+            <div class="set-price">£8.50 pp</div>
+          </div>
+
+          <div class="headcount-row">
+            <label>Number of people</label>
+            <div class="headcount-controls">
+              <button class="headcount-btn" onclick="changeCount('breakfast', -1)">−</button>
+              <div class="headcount-display" id="breakfast-count">0</div>
+              <button class="headcount-btn" onclick="changeCount('breakfast', 1)">+</button>
+            </div>
+            <span class="headcount-min">5 person minimum</span>
+          </div>
+
+          <div id="breakfast-min-warning" style="display:none;background:#c0392b;color:#fff;font-size:12px;font-weight:600;padding:9px 14px;margin-bottom:10px;border-left:4px solid #922b21;">
+            ⚠ The breakfast set menu has a minimum of 5 people. Please add more guests or remove this menu from your order.
+          </div>
+
+          <div class="customers-list" id="breakfast-customers"></div>
+
+          <!-- Extras -->
+          <div class="alacarte-section">
+            <div class="alacarte-title">Extras</div>
+            <div class="alacarte-grid">
+              <div class="alacarte-item">
+                <div>
+                  <div class="alacarte-item-info">Tea & Coffee – 1.5L</div>
+                  <div class="alacarte-item-price">£15.00 · 5 servings</div>
+                </div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('tc_small', -1)">−</button>
+                  <span id="qty-tc_small">0</span>
+                  <button onclick="changeAlacarte('tc_small', 1)">+</button>
+                </div>
+              </div>
+              <div class="alacarte-item">
+                <div>
+                  <div class="alacarte-item-info">Tea & Coffee – 3L</div>
+                  <div class="alacarte-item-price">£30.00 · 10 servings</div>
+                </div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('tc_large', -1)">−</button>
+                  <span id="qty-tc_large">0</span>
+                  <button onclick="changeAlacarte('tc_large', 1)">+</button>
+                </div>
+              </div>
+              <div class="alacarte-item">
+                <div>
+                  <div class="alacarte-item-info">Fruit Bowl</div>
+                  <div class="alacarte-item-price">£34.00 · 10 servings</div>
+                </div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('fruitbowl', -1)">−</button>
+                  <span id="qty-fruitbowl">0</span>
+                  <button onclick="changeAlacarte('fruitbowl', 1)">+</button>
+                </div>
+              </div>
+              <div class="alacarte-item">
+                <div>
+                  <div class="alacarte-item-info">Banana Bread</div>
+                  <div class="alacarte-item-price">£30.00 · 10 servings</div>
+                </div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('bananabread', -1)">−</button>
+                  <span id="qty-bananabread">0</span>
+                  <button onclick="changeAlacarte('bananabread', 1)">+</button>
+                </div>
+              </div>
+              <div class="alacarte-item">
+                <div>
+                  <div class="alacarte-item-info">Chocolate Mandarin Cake</div>
+                  <div class="alacarte-item-price">£30.00 · 10 servings</div>
+                </div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('chocomandarin', -1)">−</button>
+                  <span id="qty-chocomandarin">0</span>
+                  <button onclick="changeAlacarte('chocomandarin', 1)">+</button>
+                </div>
+              </div>
+              <div class="alacarte-item">
+                <div>
+                  <div class="alacarte-item-info">Cinnamon Buns</div>
+                  <div class="alacarte-item-price">£30.00 · 12 servings</div>
+                </div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('cinnamonbuns', -1)">−</button>
+                  <span id="qty-cinnamonbuns">0</span>
+                  <button onclick="changeAlacarte('cinnamonbuns', 1)">+</button>
+                </div>
+              </div>
+
+              <div class="alacarte-item" style="flex-direction:column;align-items:stretch;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div>
+                    <div class="alacarte-item-info">Mini Savoury Croissants</div>
+                    <div class="alacarte-item-price">£15.00 · 15 pieces</div>
+                  </div>
+                  <div class="alacarte-qty">
+                    <button onclick="changeAlacarte('savourycroissants', -1)">−</button>
+                    <span id="qty-savourycroissants">0</span>
+                    <button onclick="changeAlacarte('savourycroissants', 1)">+</button>
+                  </div>
+                </div>
+                <div id="savourycroissants-info" style="display:none;background:var(--cream);border-left:3px solid var(--gold);padding:6px 10px;">
+                  <div style="font-size:10px;font-weight:600;color:var(--label);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:3px;">Includes a mix of</div>
+                  <div style="font-size:11px;color:var(--navy);">Cheese & Tomato &nbsp;·&nbsp; Cheese & Spinach &nbsp;·&nbsp; Cheese & Poppy Seed</div>
+                </div>
+              </div>
+
+              <div class="alacarte-item" style="flex-direction:column;align-items:stretch;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div>
+                    <div class="alacarte-item-info">Jug of Juice</div>
+                    <div class="alacarte-item-price">£15.00 · 10 servings</div>
+                  </div>
+                  <div class="alacarte-qty">
+                    <button onclick="changeAlacarte('juice_jug_qty', -1)">−</button>
+                    <span id="qty-juice_jug_qty">0</span>
+                    <button onclick="changeAlacarte('juice_jug_qty', 1)">+</button>
+                  </div>
+                </div>
+                <div id="juice-jug-platters"></div>
+              </div>
+
+              <div class="alacarte-item" style="flex-direction:column;align-items:stretch;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div>
+                    <div class="alacarte-item-info">Mini Pastry Platter</div>
+                    <div class="alacarte-item-price">£15.00 · 15 pieces</div>
+                  </div>
+                  <div class="alacarte-qty">
+                    <button onclick="changeAlacarte('minipastry_qty', -1)">−</button>
+                    <span id="qty-minipastry_qty">0</span>
+                    <button onclick="changeAlacarte('minipastry_qty', 1)">+</button>
+                  </div>
+                </div>
+                <div id="minipastry-platters"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ LUNCH ══ -->
+        <div class="menu-panel" id="panel-lunch">
+          <div class="set-menu-info">
+            <div>
+              <div class="set-name">Lunch Set Menu</div>
+              <div class="set-desc">Sandwich or salad, crisps & soft drink &nbsp;·&nbsp; Served as individual portions</div>
+            </div>
+            <div class="set-price">£9.50 pp</div>
+          </div>
+
+          <div class="headcount-row">
+            <label>Number of people</label>
+            <div class="headcount-controls">
+              <button class="headcount-btn" onclick="changeCount('lunch', -1)">−</button>
+              <div class="headcount-display" id="lunch-count">0</div>
+              <button class="headcount-btn" onclick="changeCount('lunch', 1)">+</button>
+            </div>
+            <span class="headcount-min">5 person minimum</span>
+          </div>
+
+          <div id="lunch-min-warning" style="display:none;background:#c0392b;color:#fff;font-size:12px;font-weight:600;padding:9px 14px;margin-bottom:10px;border-left:4px solid #922b21;">
+            ⚠ The lunch set menu has a minimum of 5 people. Please add more guests or remove this menu from your order.
+          </div>
+
+          <div class="customers-list" id="lunch-customers"></div>
+
+          <!-- Second Lunch Set Menu -->
+          <div class="alacarte-section" style="border-top:2px solid var(--rule);margin-top:8px;padding-top:0;">
+            <div class="set-menu-info">
+              <div>
+                <div class="set-name">Lunch Set Menu 2</div>
+                <div class="set-desc">Sandwich or salad & cookie · Served as individual portions</div>
+              </div>
+              <div class="set-price">£9.50 pp</div>
+            </div>
+
+            <div class="headcount-row">
+              <label>Number of people</label>
+              <div class="headcount-controls">
+                <button class="headcount-btn" onclick="changeCount('lunch2', -1)">−</button>
+                <div class="headcount-display" id="lunch2-count">0</div>
+                <button class="headcount-btn" onclick="changeCount('lunch2', 1)">+</button>
+              </div>
+              <span class="headcount-min">5 person minimum</span>
+            </div>
+
+            <div id="lunch2-min-warning" style="display:none;background:#c0392b;color:#fff;font-size:12px;font-weight:600;padding:9px 14px;margin-bottom:10px;border-left:4px solid #922b21;">
+              ⚠ The lunch set menu has a minimum of 5 people. Please add more guests or remove this menu from your order.
+            </div>
+
+            <div class="customers-list" id="lunch2-customers"></div>
+          </div>
+
+          <!-- Lunch Platters -->
+          <div class="alacarte-section">
+            <div class="alacarte-title">Lunch Platters</div>
+            <div class="alacarte-grid">
+
+              <!-- Salad Bowl Platter -->
+              <div class="alacarte-item" style="flex-direction:column;align-items:stretch;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div>
+                    <div class="alacarte-item-info">Regular Salad Bowl</div>
+                    <div class="alacarte-item-price">£40.00 · 5 servings</div>
+                  </div>
+                  <div class="alacarte-qty">
+                    <button onclick="changeAlacarte('salad_reg_qty', -1)">−</button>
+                    <span id="qty-salad_reg_qty">0</span>
+                    <button onclick="changeAlacarte('salad_reg_qty', 1)">+</button>
+                  </div>
+                </div>
+                <div id="salad-reg-platters"></div>
+              </div>
+
+              <!-- Wrap Platter -->
+              <div class="alacarte-item" style="flex-direction:column;align-items:stretch;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div>
+                    <div class="alacarte-item-info">Regular Wrap Platter</div>
+                    <div class="alacarte-item-price">£35.00 · 5 servings</div>
+                  </div>
+                  <div class="alacarte-qty">
+                    <button onclick="changeAlacarte('wrap_reg_qty', -1)">−</button>
+                    <span id="qty-wrap_reg_qty">0</span>
+                    <button onclick="changeAlacarte('wrap_reg_qty', 1)">+</button>
+                  </div>
+                </div>
+                <div id="wrap-reg-platters"></div>
+              </div>
+
+              <!-- Large Salad Bowl -->
+              <div class="alacarte-item" style="flex-direction:column;align-items:stretch;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div>
+                    <div class="alacarte-item-info">Large Salad Bowl</div>
+                    <div class="alacarte-item-price">£70.00 · 10 servings</div>
+                  </div>
+                  <div class="alacarte-qty">
+                    <button onclick="changeAlacarte('salad_lrg_qty', -1)">−</button>
+                    <span id="qty-salad_lrg_qty">0</span>
+                    <button onclick="changeAlacarte('salad_lrg_qty', 1)">+</button>
+                  </div>
+                </div>
+                <div id="salad-lrg-platters"></div>
+              </div>
+
+              <!-- Large Wrap Platter -->
+              <div class="alacarte-item" style="flex-direction:column;align-items:stretch;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div>
+                    <div class="alacarte-item-info">Large Wrap Platter</div>
+                    <div class="alacarte-item-price">£70.00 · 10 servings</div>
+                  </div>
+                  <div class="alacarte-qty">
+                    <button onclick="changeAlacarte('wrap_lrg_qty', -1)">−</button>
+                    <span id="qty-wrap_lrg_qty">0</span>
+                    <button onclick="changeAlacarte('wrap_lrg_qty', 1)">+</button>
+                  </div>
+                </div>
+                <div id="wrap-lrg-platters"></div>
+              </div>
+
+              <!-- Bowl of Crisps -->
+              <div class="alacarte-item">
+                <div>
+                  <div class="alacarte-item-info">Bowl of Crisps</div>
+                  <div class="alacarte-item-price">£15.00 · 10 servings</div>
+                </div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('crispbowl', -1)">−</button>
+                  <span id="qty-crispbowl">0</span>
+                  <button onclick="changeAlacarte('crispbowl', 1)">+</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ AFTERNOON ══ -->
+        <div class="menu-panel" id="panel-afternoon">
+          <div class="set-menu-info">
+            <div>
+              <div class="set-name">Afternoon Set Menu</div>
+              <div class="set-desc">Tea & coffee with any cookie &nbsp;·&nbsp; Served as individual portions</div>
+            </div>
+            <div class="set-price">£6.00 pp</div>
+          </div>
+
+          <div class="headcount-row">
+            <label>Number of people</label>
+            <div class="headcount-controls">
+              <button class="headcount-btn" onclick="changeCount('afternoon', -1)">−</button>
+              <div class="headcount-display" id="afternoon-count">0</div>
+              <button class="headcount-btn" onclick="changeCount('afternoon', 1)">+</button>
+            </div>
+            <span class="headcount-min">5 person minimum</span>
+          </div>
+
+          <div id="afternoon-min-warning" style="display:none;background:#c0392b;color:#fff;font-size:12px;font-weight:600;padding:9px 14px;margin-bottom:10px;border-left:4px solid #922b21;">
+            ⚠ The afternoon set menu has a minimum of 5 people. Please add more guests or remove this menu from your order.
+          </div>
+
+          <div class="customers-list" id="afternoon-customers"></div>
+
+          <!-- Sweet platters -->
+          <div class="alacarte-section">
+            <div class="alacarte-title">Sweet Platters</div>
+            <div class="alacarte-grid">
+              <div class="alacarte-item">
+                <div>
+                  <div class="alacarte-item-info">6 Mixed Cupcakes</div>
+                  <div class="alacarte-item-price">£18.00</div>
+                </div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('cupcakes', -1)">−</button>
+                  <span id="qty-cupcakes">0</span>
+                  <button onclick="changeAlacarte('cupcakes', 1)">+</button>
+                </div>
+              </div>
+              <div class="alacarte-item">
+                <div>
+                  <div class="alacarte-item-info">5 Mixed Doughnuts</div>
+                  <div class="alacarte-item-price">£18.00</div>
+                </div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('doughnuts', -1)">−</button>
+                  <span id="qty-doughnuts">0</span>
+                  <button onclick="changeAlacarte('doughnuts', 1)">+</button>
+                </div>
+              </div>
+              <div class="alacarte-item">
+                <div>
+                  <div class="alacarte-item-info">8 Pastel De Nata</div>
+                  <div class="alacarte-item-price">£18.00</div>
+                </div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('nata', -1)">−</button>
+                  <span id="qty-nata">0</span>
+                  <button onclick="changeAlacarte('nata', 1)">+</button>
+                </div>
+              </div>
+              <div class="alacarte-item">
+                <div>
+                  <div class="alacarte-item-info">9 Mixed Crodoughs</div>
+                  <div class="alacarte-item-price">£28.00</div>
+                </div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('crodoughs', -1)">−</button>
+                  <span id="qty-crodoughs">0</span>
+                  <button onclick="changeAlacarte('crodoughs', 1)">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drinks -->
+          <div class="alacarte-section">
+            <div class="alacarte-title">Drinks</div>
+            <div class="alacarte-grid">
+              <div class="alacarte-item">
+                <div><div class="alacarte-item-info">Tea & Coffee – 1.5L</div><div class="alacarte-item-price">£15.00 · 5 servings</div></div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('aft_tc_small', -1)">−</button>
+                  <span id="qty-aft_tc_small">0</span>
+                  <button onclick="changeAlacarte('aft_tc_small', 1)">+</button>
+                </div>
+              </div>
+              <div class="alacarte-item">
+                <div><div class="alacarte-item-info">Tea & Coffee – 3L</div><div class="alacarte-item-price">£30.00 · 10 servings</div></div>
+                <div class="alacarte-qty">
+                  <button onclick="changeAlacarte('aft_tc_large', -1)">−</button>
+                  <span id="qty-aft_tc_large">0</span>
+                  <button onclick="changeAlacarte('aft_tc_large', 1)">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ SPECIAL OCCASIONS ══ -->
+        <div class="menu-panel" id="panel-occasions">
+          <div class="set-menu-info" style="background:var(--navy-mid);border-left:3px solid var(--gold);">
+            <div>
+              <div class="set-name" style="color:var(--white);">Special Occasions</div>
+              <div class="set-desc" style="color:var(--steel);">Celebration cakes · Minimum 48 hours notice</div>
+            </div>
+          </div>
+
+          <!-- Celebration Cakes -->
+          <div class="alacarte-section">
+            <div class="alacarte-title">Large Round Cake &nbsp;·&nbsp; Available cut (14 slices) or uncut</div>
+            <div class="alacarte-grid">
+              <div class="alacarte-item" style="flex-direction:column;align-items:stretch;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div>
+                    <div class="alacarte-item-info">Celebration Cake</div>
+                    <div class="alacarte-item-price">£55.00 each</div>
+                  </div>
+                  <div class="alacarte-qty">
+                    <button onclick="changeAlacarte('celebcake_qty', -1)">−</button>
+                    <span id="qty-celebcake_qty">0</span>
+                    <button onclick="changeAlacarte('celebcake_qty', 1)">+</button>
+                  </div>
+                </div>
+                <div id="celebcake-selections"></div>
+              </div>
+            </div>
+
+            <!-- Custom message (hidden when cut selected) -->
+            <div id="cake-message-section" style="margin-top:14px;display:none;">
+              <div class="alacarte-title" style="margin-bottom:6px;">Custom Cake Message <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--label);font-size:10px;">(optional)</span></div>
+              <input type="text" id="cake-message" maxlength="50"
+                placeholder="e.g. Happy Birthday Sarah!"
+                oninput="updateCakeMessage(this.value)"
+                style="width:100%;border:none;border-bottom:1.5px solid var(--navy);background:transparent;font-family:'Inter',sans-serif;font-size:13px;color:var(--navy);padding:4px 0;outline:none;">
+              <div style="display:flex;justify-content:space-between;margin-top:4px;">
+                <span style="font-size:10px;color:var(--label);">Max 50 characters</span>
+                <span id="cake-message-count" style="font-size:10px;color:var(--label);">0 / 50</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /menu-selector -->
+    </div>
+
+    <div class="submit-row">
+      <button class="btn-submit" id="submit-btn" onclick="submitOrder()">Review & Send Order</button>
+    </div>
+
+  </main>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="order-sidebar">
+    <div class="sidebar-header">
+      <h2>Order Summary</h2>
+      <p>Updates as you build your order</p>
+    </div>
+    <div class="sidebar-body" id="sidebar-body">
+      <div class="summary-empty">
+        <div class="icon">☕</div>
+        <p>Select a menu and add<br>people to see your order here.</p>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+// ── Menu data ────────────────────────────────────────────────────────────────
+const MENUS = {
+  breakfast: {
+    label: 'Breakfast Set Menu',
+    price: 8.50,
+    fields: [
+      { id: 'pastry', label: 'Pastry', options: ['Plain Croissant','Almond Croissant','Pain au Chocolat','Pain aux Raisins','Cinnamon Bun'] },
+      { id: 'juice',  label: 'Juice',  options: ['Orange Juice','Apple Juice'] },
+      { id: 'hot',    label: 'Hot drink', options: ['Tea','Coffee','None'] },
+    ]
+  },
+  lunch: {
+    label: 'Lunch Set Menu 1',
+    price: 9.50,
+    fields: [
+      { id: 'main',  label: 'Sandwich / Salad', options: ['Tarragon Chicken Wrap','BLT','Chicken Ciabatta','Mozzarella Focaccia','Harissa Falafel Wrap','Pesto Pasta','Mixed Leaf & Squash','Greek Salad','Coleslaw','Mixed Salad'] },
+      { id: 'crisps', label: 'Crisps', options: ['Salted','Cheese & Onion','Longhorn Beef','Salt & Vinegar','Sweet Chilli'] },
+      { id: 'drink',  label: 'Drink', options: ['Coke','Coke Zero','Diet Coke','Fanta','Sprite','Still Water','Sparkling Water'] },
+    ]
+  },
+  lunch2: {
+    label: 'Lunch Set Menu 2',
+    price: 9.50,
+    fields: [
+      { id: 'main',   label: 'Sandwich / Salad', options: ['Tarragon Chicken Wrap','BLT','Chicken Ciabatta','Mozzarella Focaccia','Harissa Falafel Wrap','Pesto Pasta','Mixed Leaf & Squash','Greek Salad','Coleslaw','Mixed Salad'] },
+      { id: 'cookie', label: 'Cookie', options: ['NY Style Pistachio','NY Style Chocolate Chip','Chocolate & Hazelnut','Oat & Raisin'] },
+    ]
+  },
+  afternoon: {
+    label: 'Afternoon Set Menu',
+    price: 6.00,
+    fields: [
+      { id: 'cookie', label: 'Cookie', options: ['NY Style Pistachio','NY Style Chocolate Chip','Chocolate & Hazelnut','Oat & Raisin'] },
+      { id: 'hot',    label: 'Hot drink', options: ['Tea','Coffee'] },
+    ]
+  }
+};
+
+const ALACARTE = {
+  // breakfast sharers
+  tc_small:      { label: 'Tea & Coffee 1.5L (5 servings)', price: 15.00 },
+  tc_large:      { label: 'Tea & Coffee 3L (10 servings)', price: 30.00 },
+  fruitbowl:     { label: 'Fruit Bowl (10 servings)', price: 34.00 },
+  bananabread:   { label: 'Banana Bread (10 servings)', price: 30.00 },
+  chocomandarin: { label: 'Chocolate Mandarin Cake GF (10 servings)', price: 30.00 },
+  minipastry_qty:{ label: 'Mini Pastry Platter (15 pieces)', price: 15.00 },
+  juice_jug_qty:  { label: 'Jug of Juice (10 servings)', price: 15.00 },
+  cinnamonbuns:      { label: 'Cinnamon Buns (12 servings)', price: 30.00 },
+  savourycroissants: { label: 'Mini Savoury Croissants (15 pieces)', price: 15.00 },
+  // lunch platters
+  salad_reg_qty: { label: 'Regular Salad Bowl (5 servings)', price: 40.00 },
+  salad_lrg_qty: { label: 'Large Salad Bowl (10 servings)', price: 70.00 },
+  wrap_reg_qty:  { label: 'Regular Wrap Platter (5 servings)', price: 35.00 },
+  wrap_lrg_qty:  { label: 'Large Wrap Platter (10 servings)', price: 70.00 },
+  crispbowl:     { label: 'Bowl of Crisps (10 servings)', price: 15.00 },
+  // lunch extras
+  chicken:   { label: 'Grilled Chicken Skewer', price: 2.50 },
+  halloumi:  { label: 'Halloumi (2 pieces)', price: 2.50 },
+  falafel:   { label: 'Baked Falafel', price: 2.50 },
+  // afternoon
+  cupcakes:  { label: '6 Mixed Cupcakes', price: 18.00 },
+  doughnuts: { label: '5 Mixed Doughnuts', price: 18.00 },
+  nata:      { label: '8 Pastel De Nata', price: 18.00 },
+  crodoughs: { label: '9 Mixed Crodoughs', price: 28.00 },
+  aftcoffee: { label: 'Coffee & Tea', price: 3.00 },
+  aft_tc_small: { label: 'Tea & Coffee 1.5L (5 servings)', price: 15.00 },
+  aft_tc_large: { label: 'Tea & Coffee 3L (10 servings)', price: 30.00 },
+  // special occasions
+  celebcake_qty: { label: 'Celebration Cake', price: 55.00 },
+};
+
+// ── State ────────────────────────────────────────────────────────────────────
+const state = {
+  activeTab: 'breakfast',
+  counts: { breakfast: 0, lunch: 0, lunch2: 0, afternoon: 0 },
+  customers: { breakfast: [], lunch: [], lunch2: [], afternoon: [] },
+  alacarte: {}
+};
+
+// ── Tab switching ────────────────────────────────────────────────────────────
+function switchTab(tab, btn) {
+  state.activeTab = tab;
+  document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.menu-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  btn.classList.add('active');
+  updateSidebar();
+}
+
+// ── Headcount ────────────────────────────────────────────────────────────────
+function changeCount(menu, delta) {
+  const current = state.counts[menu];
+  const next = Math.max(0, current + delta);
+  state.counts[menu] = next;
+  document.getElementById(menu + '-count').textContent = next;
+
+  // Minimum warning (all set menus require 5)
+  const warning = document.getElementById(menu + '-min-warning');
+  if (warning) warning.style.display = (next > 0 && next < 5) ? 'block' : 'none';
+
+  // Sync customer array
+  const arr = state.customers[menu];
+  while (arr.length < next) arr.push({ name: '', selections: {} });
+  if (arr.length > next) arr.splice(next);
+  renderCustomers(menu);
+  updateSidebar();
+}
+
+// ── Salad options (used to conditionally show per-customer extras) ────────────
+const SALAD_MAINS = ['Pesto Pasta','Mixed Leaf & Squash','Greek Salad','Coleslaw','Mixed Salad'];
+
+// ── Render customer cards ────────────────────────────────────────────────────
+function renderCustomers(menu) {
+  const container = document.getElementById(menu + '-customers');
+  const menuData = MENUS[menu];
+  const customers = state.customers[menu];
+  const isLunch = menu === 'lunch' || menu === 'lunch2';
+
+  container.innerHTML = '';
+  customers.forEach((customer, i) => {
+    const card = document.createElement('div');
+    card.className = 'customer-card';
+
+    const hasSaladMain = SALAD_MAINS.includes(customer.selections['main']);
+    const totalFields = menuData.fields.length + (isLunch && hasSaladMain ? 1 : 0);
+    const gridCols = Math.min(totalFields, 4);
+    const gridClass = `grid-${gridCols}`;
+
+    const extrasHtml = (isLunch && hasSaladMain) ? `
+      <div class="customer-select-wrap">
+        <label>Extra (optional)</label>
+        <select onchange="updateSelection('${menu}', ${i}, 'extras', this.value)"
+                class="${!customer.selections['extras'] ? 'placeholder' : ''}">
+          <option value="">None</option>
+          <option value="Grilled Chicken Skewer" ${customer.selections['extras'] === 'Grilled Chicken Skewer' ? 'selected' : ''}>Grilled Chicken Skewer – £2.50</option>
+          <option value="Halloumi (2 pieces)" ${customer.selections['extras'] === 'Halloumi (2 pieces)' ? 'selected' : ''}>Halloumi (2 pieces) – £2.50</option>
+          <option value="Baked Falafel (3 pieces)" ${customer.selections['extras'] === 'Baked Falafel (3 pieces)' ? 'selected' : ''}>Baked Falafel (3 pieces) – £2.50</option>
+        </select>
+      </div>` : '';
+
+    card.innerHTML = `
+      <div class="customer-header">
+        <div class="customer-num">${i + 1}</div>
+        <input class="customer-name-input" type="text"
+          placeholder="Customer ${i + 1} name (optional)"
+          value="${customer.name}"
+          onchange="updateName('${menu}', ${i}, this.value)">
+      </div>
+      <div class="customer-body" style="display:grid;grid-template-columns:repeat(${gridCols},1fr);gap:10px;">
+        ${menuData.fields.map(field => `
+          <div class="customer-select-wrap">
+            <label>${field.label}</label>
+            <select onchange="updateSelection('${menu}', ${i}, '${field.id}', this.value)"
+                    class="${!customer.selections[field.id] ? 'placeholder' : ''}">
+              <option value="">Select…</option>
+              ${field.options.map(opt =>
+                `<option value="${opt}" ${customer.selections[field.id] === opt ? 'selected' : ''}>${opt}</option>`
+              ).join('')}
+            </select>
+          </div>
+        `).join('')}
+        ${extrasHtml}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  if (customers.length === 0) {
+    container.innerHTML = `<p style="font-size:12px;color:var(--label);padding:8px 0;">Use + to add people to this order.</p>`;
+  }
+}
+
+function updateName(menu, idx, val) {
+  state.customers[menu][idx].name = val;
+  updateSidebar();
+}
+
+function updateSelection(menu, idx, field, val) {
+  state.customers[menu][idx].selections[field] = val;
+  // If main changes on a lunch menu, re-render to show/hide extras dropdown
+  if ((menu === 'lunch' || menu === 'lunch2') && field === 'main') {
+    // Clear stale extras selection if switching away from salad
+    if (!SALAD_MAINS.includes(val)) {
+      state.customers[menu][idx].selections['extras'] = '';
+    }
+    renderCustomers(menu);
+  } else {
+    const selects = document.querySelectorAll(`#${menu}-customers .customer-card:nth-child(${idx + 1}) select`);
+    selects.forEach(s => { s.classList.toggle('placeholder', !s.value); });
+  }
+  updateSidebar();
+}
+
+// ── À la carte ───────────────────────────────────────────────────────────────
+function changeAlacarte(key, delta) {
+  const current = state.alacarte[key] || 0;
+  const next = Math.max(0, current + delta);
+  state.alacarte[key] = next;
+  document.getElementById('qty-' + key).textContent = next;
+  if (key === 'savourycroissants') {
+    const info = document.getElementById('savourycroissants-info');
+    if (info) info.style.display = next > 0 ? 'block' : 'none';
+  }
+  if (key === 'celebcake_qty') {
+    while (state.celebCakes.length < next) state.celebCakes.push({flavour:'', cut:''});
+    if (state.celebCakes.length > next) state.celebCakes.splice(next);
+    renderCelebCakes();
+  }
+  if (key === 'juice_jug_qty') {
+    while (state.juiceJugs.length < next) state.juiceJugs.push('');
+    if (state.juiceJugs.length > next) state.juiceJugs.splice(next);
+    renderJuiceJugs();
+  }
+  if (key === 'minipastry_qty') {
+    while (state.miniPastryPlatters.length < next) state.miniPastryPlatters.push('');
+    if (state.miniPastryPlatters.length > next) state.miniPastryPlatters.splice(next);
+    renderMiniPastryPlatters();
+  }
+  if (key === 'salad_reg_qty') {
+    while (state.saladRegPlatters.length < next) state.saladRegPlatters.push({salad:'', extras:''});
+    if (state.saladRegPlatters.length > next) state.saladRegPlatters.splice(next);
+    renderSaladPlatters('reg');
+  }
+  if (key === 'salad_lrg_qty') {
+    while (state.saladLrgPlatters.length < next) state.saladLrgPlatters.push({salad:'', extras:''});
+    if (state.saladLrgPlatters.length > next) state.saladLrgPlatters.splice(next);
+    renderSaladPlatters('lrg');
+  }
+  if (key === 'wrap_reg_qty') {
+    while (state.wrapRegPlatters.length < next) state.wrapRegPlatters.push('');
+    if (state.wrapRegPlatters.length > next) state.wrapRegPlatters.splice(next);
+    renderWrapPlatters('reg');
+  }
+  if (key === 'wrap_lrg_qty') {
+    while (state.wrapLrgPlatters.length < next) state.wrapLrgPlatters.push('');
+    if (state.wrapLrgPlatters.length > next) state.wrapLrgPlatters.splice(next);
+    renderWrapPlatters('lrg');
+  }
+  updateSidebar();
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+function updateSidebar() {
+  const body = document.getElementById('sidebar-body');
+  const parts = [];
+  let subtotal = 0;
+  let hasContent = false;
+
+  // Per-menu summaries
+  ['breakfast','lunch','lunch2','afternoon'].forEach(menu => {
+    const customers = state.customers[menu];
+    const menuData = MENUS[menu];
+    const count = state.counts[menu];
+    if (count === 0) return;
+
+    hasContent = true;
+    subtotal += count * menuData.price;
+
+    let html = `<div class="summary-section">
+      <div class="summary-section-label">${menuData.label} × ${count} — £${(count * menuData.price).toFixed(2)}</div>`;
+
+    customers.forEach((c, i) => {
+      const name = c.name || `Customer ${i + 1}`;
+      const selections = menuData.fields.map(f => c.selections[f.id] || `<em style="opacity:.5">No ${f.label.toLowerCase()} selected</em>`);
+      if (c.selections['extras']) {
+        selections.push(`${c.selections['extras']} (+£2.50)`);
+        subtotal += 2.50;
+      }
+      html += `<div class="summary-customer">
+        <div class="summary-customer-name">${name}</div>
+        <div class="summary-customer-item">${selections.join(' · ')}</div>
+      </div>`;
+    });
+    html += `</div>`;
+    parts.push(html);
+  });
+
+  // À la carte
+  const alaItems = Object.entries(state.alacarte).filter(([,q]) => q > 0);
+  if (alaItems.length || state.pastrySelections.length > 0) {
+    hasContent = true;
+    let alaHtml = `<div class="summary-section"><div class="summary-section-label">Additional Items</div>`;
+    alaItems.forEach(([key, qty]) => {
+      const item = ALACARTE[key];
+      const lineTotal = qty * item.price;
+      subtotal += lineTotal;
+      alaHtml += `<div class="summary-customer">
+        <div class="summary-customer-name">${item.label} × ${qty}${lineTotal > 0 ? ' — £' + lineTotal.toFixed(2) : ''}</div>`;
+      if (key === 'pastry' && state.pastrySelections.length > 0) {
+        state.pastrySelections.forEach((sel, i) => {
+          alaHtml += `<div class="summary-customer-item">Pastry ${i+1}: ${sel || '<em style="opacity:.5">Not selected</em>'}</div>`;
+        });
+      }
+      alaHtml += `</div>`;
+    });
+    alaHtml += `</div>`;
+    parts.push(alaHtml);
+  }
+
+  // Salad platters
+  [['saladRegPlatters','Regular Salad Bowls',5],['saladLrgPlatters','Large Salad Bowls',10]].forEach(([key, label, extrasQty]) => {
+    if (state[key].length > 0) {
+      hasContent = true;
+      let html = `<div class="summary-section"><div class="summary-section-label">${label} (5 servings each)</div>`;
+      state[key].forEach((bowl, i) => {
+        let extrasStr = '';
+        if (bowl.extras && bowl.extras !== 'None') {
+          const lineTotal = extrasQty * 2.50;
+          subtotal += lineTotal;
+          extrasStr = ` + ${bowl.extras} ×${extrasQty} (£${lineTotal.toFixed(2)})`;
+        }
+        html += `<div class="summary-customer"><div class="summary-customer-name">Bowl ${i+1}</div>
+          <div class="summary-customer-item">${bowl.salad || '<em style="opacity:.5">No salad selected</em>'}${extrasStr}</div></div>`;
+      });
+      html += `</div>`;
+      parts.push(html);
+    }
+  });
+
+  // Wrap platters
+  [['wrapRegPlatters','Regular Wrap Platters'],['wrapLrgPlatters','Large Wrap Platters']].forEach(([key, label]) => {
+    if (state[key].length > 0) {
+      hasContent = true;
+      let html = `<div class="summary-section"><div class="summary-section-label">${label} (5 servings each)</div>`;
+      state[key].forEach((sel, i) => {
+        html += `<div class="summary-customer"><div class="summary-customer-name">Platter ${i+1}</div>
+          <div class="summary-customer-item">${sel || '<em style="opacity:.5">No type selected</em>'}</div></div>`;
+      });
+      html += `</div>`;
+      parts.push(html);
+    }
+  });
+
+  // Celebration cakes
+  if (state.celebCakes.length > 0) {
+    hasContent = true;
+    let html = `<div class="summary-section"><div class="summary-section-label">Celebration Cakes</div>`;
+    state.celebCakes.forEach((cake, i) => {
+      const flavour = cake.flavour || '<em style="opacity:.5">No flavour selected</em>';
+      const cut = cake.cut || '<em style="opacity:.5">Cut/uncut not selected</em>';
+      html += `<div class="summary-customer"><div class="summary-customer-name">Cake ${i+1} — £55.00</div>
+        <div class="summary-customer-item">${flavour} · ${cut}</div></div>`;
+    });
+    const anyUncut = state.celebCakes.some(c => c.cut !== 'Cut (14 slices)');
+    if (state.cakeMessage && anyUncut) {
+      html += `<div class="summary-customer"><div class="summary-customer-name" style="color:var(--steel);">Message</div>
+        <div class="summary-customer-item">"${state.cakeMessage}"</div></div>`;
+    }
+    html += `</div>`;
+    parts.push(html);
+    subtotal += state.celebCakes.length * 55.00;
+  }
+
+  // Juice jugs
+  if (state.juiceJugs.length > 0) {
+    hasContent = true;
+    let html = `<div class="summary-section"><div class="summary-section-label">Jugs of Juice (10 servings each)</div>`;
+    state.juiceJugs.forEach((sel, i) => {
+      html += `<div class="summary-customer"><div class="summary-customer-name">Jug ${i+1}</div>
+        <div class="summary-customer-item">${sel || '<em style="opacity:.5">No flavour selected</em>'}</div></div>`;
+    });
+    html += `</div>`;
+    parts.push(html);
+  }
+
+  // Mini pastry platters
+  if (state.miniPastryPlatters.length > 0) {
+    hasContent = true;
+    let mpHtml = `<div class="summary-section"><div class="summary-section-label">Mini Pastry Platters (15 pieces each)</div>`;
+    state.miniPastryPlatters.forEach((flavour, i) => {
+      mpHtml += `<div class="summary-customer">
+        <div class="summary-customer-name">Platter ${i+1}</div>
+        <div class="summary-customer-item">${flavour || '<em style="opacity:.5">No flavour selected</em>'}</div>
+      </div>`;
+    });
+    mpHtml += `</div>`;
+    parts.push(mpHtml);
+  }
+
+  if (!hasContent) {
+    body.innerHTML = `<div class="summary-empty"><div class="icon">☕</div><p>Select a menu and add<br>people to see your order here.</p></div>`;
+    return;
+  }
+
+  const DISCOUNT_THRESHOLD = 200;
+  const DISCOUNT_RATE = 0.10;
+  const qualifies = subtotal >= DISCOUNT_THRESHOLD;
+  const discount = qualifies ? subtotal * DISCOUNT_RATE : 0;
+  const discountedSubtotal = subtotal - discount;
+  const vat = discountedSubtotal * 0.20;
+  const total = discountedSubtotal * 1.20;
+
+  // Nudge banner — show how close they are if under threshold
+  let nudgeHtml = '';
+  if (!qualifies && subtotal > 0) {
+    const remaining = (DISCOUNT_THRESHOLD - subtotal).toFixed(2);
+    nudgeHtml = `<div style="background:var(--gold);padding:10px 12px;margin-bottom:12px;border-left:3px solid var(--gold-dark);">
+      <div style="font-size:11px;font-weight:700;color:var(--navy);">🎉 Add £${remaining} more for 10% off your entire order!</div>
+      <div style="font-size:10px;color:var(--navy-mid);margin-top:2px;">Spend over £200 (ex. VAT) to unlock your discount.</div>
+    </div>`;
+  } else if (qualifies) {
+    nudgeHtml = `<div style="background:#27ae60;padding:10px 12px;margin-bottom:12px;border-left:3px solid #1e8449;">
+      <div style="font-size:11px;font-weight:700;color:#fff;">✓ 10% discount applied — you're saving £${discount.toFixed(2)}!</div>
+    </div>`;
+  }
+
+  parts.push(nudgeHtml + `<div class="summary-totals">
+    <div class="summary-total-row"><span class="t-label">Subtotal (ex. VAT)</span><span class="t-val">£${subtotal.toFixed(2)}</span></div>
+    ${qualifies ? `<div class="summary-total-row"><span class="t-label" style="color:#27ae60;">10% Discount</span><span class="t-val" style="color:#27ae60;">−£${discount.toFixed(2)}</span></div>` : ''}
+    <div class="summary-total-row"><span class="t-label">VAT (20%)</span><span class="t-val">£${vat.toFixed(2)}</span></div>
+    <div class="summary-total-row grand"><span class="t-label">Total (inc. VAT)</span><span class="t-val">£${total.toFixed(2)}</span></div>
+  </div>`);
+
+  body.innerHTML = parts.join('');
+}
+
+// ── Submit ────────────────────────────────────────────────────────────────────
+function submitOrder() {
+  // Basic validation
+  const company = document.getElementById('company').value.trim();
+  const contact = document.getElementById('contact').value.trim();
+  const email   = document.getElementById('email').value.trim();
+  const date    = document.getElementById('date-required').value;
+  const time    = document.getElementById('time-required').value;
+
+  if (!company || !contact || !email || !date || !time) {
+    alert('Please fill in your company, name, email, date and time before submitting.');
+    return;
+  }
+
+  // Validate cut/uncut on all celebration cakes
+  if (state.celebCakes.length > 0) {
+    const missing = state.celebCakes.findIndex(c => !c.cut);
+    if (missing !== -1) {
+      alert(`Please select cut or uncut for Cake ${missing + 1}.`);
+      document.getElementById('panel-occasions') && switchTab('occasions', document.querySelector('.menu-tab:last-child'));
+      return;
+    }
+  }
+
+  let hasOrder = false;
+  ['breakfast','lunch','afternoon'].forEach(m => { if (state.counts[m] > 0) hasOrder = true; });
+  Object.values(state.alacarte).forEach(q => { if (q > 0) hasOrder = true; });
+
+  if (!hasOrder) {
+    alert('Please add at least one item to your order.');
+    return;
+  }
+
+  // ── Build structured order payload ────────────────────────────────────────
+  const notes = document.getElementById('notes').value.trim();
+  const orderRef = `GC-${date.replace(/-/g,'')}-${company.substring(0,3).toUpperCase()}`;
+
+  // ── Calculate totals first ─────────────────────────────────────────────────
+  let subtotal = 0;
+  ['breakfast','lunch','lunch2','afternoon'].forEach(m => {
+    subtotal += state.counts[m] * MENUS[m].price;
+    state.customers[m].forEach(c => { if (c.selections['extras']) subtotal += 2.50; });
+  });
+  Object.entries(state.alacarte).filter(([,q])=>q>0).forEach(([k,q])=>{ subtotal += q * ALACARTE[k].price; });
+  state.saladRegPlatters.forEach(b => { if (b.extras && b.extras !== 'None') subtotal += 5 * 2.50; });
+  state.saladLrgPlatters.forEach(b => { if (b.extras && b.extras !== 'None') subtotal += 10 * 2.50; });
+  subtotal += state.celebCakes.length * 55.00;
+  const qualifiesDiscount = subtotal >= 200;
+  const discount = qualifiesDiscount ? subtotal * 0.10 : 0;
+  const discountedSub = subtotal - discount;
+  const vat = discountedSub * 0.20;
+  const totalInc = discountedSub * 1.20;
+
+  // ── Build items array ─────────────────────────────────────────────────────
+  const items = [];
+
+  ['breakfast','lunch','lunch2','afternoon'].forEach(menu => {
+    const count = state.counts[menu];
+    if (!count) return;
+    const menuData = MENUS[menu];
+    const customers = state.customers[menu].map((c, i) => ({
+      name: c.name || '',
+      selections: [
+        ...menuData.fields.map(f => `${f.label}: ${c.selections[f.id] || 'Not selected'}`),
+        ...(c.selections['extras'] ? [`Extra: ${c.selections['extras']} (+£2.50)`] : [])
+      ]
+    }));
+    items.push({ type: 'menu', label: `${menuData.label} × ${count}`, customers });
+  });
+
+  const alaLines = [];
+  Object.entries(state.alacarte).filter(([,q]) => q > 0).forEach(([key, qty]) => {
+    alaLines.push(`${qty} × ${ALACARTE[key].label}`);
+  });
+  state.miniPastryPlatters.forEach((f,i) => alaLines.push(`Mini Pastry Platter ${i+1}: ${f||'TBC'}`));
+  state.juiceJugs.forEach((f,i) => alaLines.push(`Jug of Juice ${i+1}: ${f||'TBC'}`));
+  state.saladRegPlatters.forEach((b,i) => {
+    let ln = `Regular Salad Bowl ${i+1}: ${b.salad||'TBC'}`;
+    if (b.extras && b.extras !== 'None') ln += ` + ${b.extras} ×5`;
+    alaLines.push(ln);
+  });
+  state.saladLrgPlatters.forEach((b,i) => {
+    let ln = `Large Salad Bowl ${i+1}: ${b.salad||'TBC'}`;
+    if (b.extras && b.extras !== 'None') ln += ` + ${b.extras} ×10`;
+    alaLines.push(ln);
+  });
+  state.wrapRegPlatters.forEach((s,i) => alaLines.push(`Regular Wrap Platter ${i+1}: ${s||'TBC'}`));
+  state.wrapLrgPlatters.forEach((s,i) => alaLines.push(`Large Wrap Platter ${i+1}: ${s||'TBC'}`));
+  if (alaLines.length) items.push({ type: 'alacarte', label: 'Extras & Sharers', lines: alaLines });
+
+  if (state.celebCakes.length) {
+    const anyUncut = state.celebCakes.some(c => c.cut !== 'Cut (14 slices)');
+    const cakeLines = state.celebCakes.map((c,i) => `Cake ${i+1}: ${c.flavour||'TBC'} — ${c.cut||'TBC'}`);
+    if (state.cakeMessage && anyUncut) cakeLines.push(`Message: "${state.cakeMessage}"`);
+    items.push({ type: 'cake', label: 'Celebration Cakes', lines: cakeLines });
+  }
+
+  const payload = {
+    company, contact, email, date, time, notes, orderRef, items,
+    subtotal: +subtotal.toFixed(2), discount: +discount.toFixed(2),
+    vat: +vat.toFixed(2), totalInc: +totalInc.toFixed(2)
+  };
+
+  // ── Send to Gravity Forms REST API ────────────────────────────────────────
+  const submitBtn = document.getElementById('submit-btn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Sending order…';
+
+  // Build a human-readable order summary for the GF entry
+  let orderSummary = `ORDER REFERENCE: ${orderRef}\n`;
+  orderSummary += `DATE: ${new Date(date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} at ${time}\n\n`;
+
+  items.forEach(item => {
+    orderSummary += `${item.label.toUpperCase()}\n`;
+    if (item.customers) {
+      item.customers.forEach((c, i) => {
+        const name = c.name || `Customer ${i+1}`;
+        orderSummary += `  ${name}: ${c.selections.join(' | ')}\n`;
+      });
+    }
+    if (item.lines) {
+      item.lines.forEach(l => { orderSummary += `  ${l}\n`; });
+    }
+    orderSummary += '\n';
+  });
+
+  orderSummary += `─────────────────────────\n`;
+  orderSummary += `Subtotal (ex. VAT): £${subtotal.toFixed(2)}\n`;
+  if (qualifiesDiscount) orderSummary += `10% Discount: −£${discount.toFixed(2)}\n`;
+  orderSummary += `VAT (20%): £${(discountedSub*0.2).toFixed(2)}\n`;
+  orderSummary += `TOTAL (inc. VAT): £${totalInc.toFixed(2)}\n`;
+
+  // Gravity Forms field IDs — update these to match your form field IDs
+  // Check Forms → your form → field settings for each field's ID number
+  const GF_FORM_ID   = 2;
+  const GF_BASE_URL  = 'https://huddle.co.uk/wp-json/gf/v2';
+  const GF_CK        = 'ck_409e592a1b8ed33e84d5f4df63fa3c6eabbd69c9';
+  const GF_CS        = 'cs_3a2bfaccb77b2622f5610fa5cec93f7802d18c40';
+  const GF_AUTH      = btoa(`${GF_CK}:${GF_CS}`);
+
+  // GF entry field mapping — keys are Gravity Forms field IDs
+  // IMPORTANT: replace the numbers on the left with your actual GF field IDs
+  // Find them by editing each field in GF and checking "Field ID" in the sidebar
+  const gfEntry = {
+    '1':  company,
+    '3':  contact,
+    '4':  email,
+    '5':  date,
+    '6':  time,
+    '7':  orderSummary,
+    '8':  notes,
+    '9':  orderRef,
+    '10': `£${totalInc.toFixed(2)}`,
+  };
+
+  fetch(`${GF_BASE_URL}/forms/${GF_FORM_ID}/submissions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${GF_AUTH}`
+    },
+    body: JSON.stringify({ field_values: gfEntry, target_page: 0, source_page: 1 })
+  })
+  .then(r => r.json())
+  .then(res => {
+    // GF returns { is_valid: true, ... } on success
+    if (res.is_valid || res.entry_id) {
+      showConfirmation(orderRef, company, contact, date, time, totalInc, null);
+    } else {
+      console.error('GF response:', res);
+      alert('Something went wrong submitting your order. Please email Hammersmith.Cafe@Huddle.co.uk directly.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Review & Send Order';
+    }
+  })
+  .catch(err => {
+    console.error('Submission error:', err);
+    alert('Could not reach the server. Please email Hammersmith.Cafe@Huddle.co.uk directly.');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Review & Send Order';
+  });
+}
+
+// ── Confirmation screen ──────────────────────────────────────────────────────────────────────────────
+function showConfirmation(ref, company, contact, date, time, total, warning) {
+  const dateFormatted = new Date(date).toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.body.innerHTML = `
+    <div style="min-height:100vh;background:var(--cream);display:flex;align-items:center;justify-content:center;padding:24px;font-family:'Inter',sans-serif;">
+      <div style="max-width:520px;width:100%;background:var(--white);border-top:5px solid var(--gold);">
+        <div style="background:var(--navy);padding:28px 36px;">
+          <div style="font-family:'Georgia',serif;font-size:20px;font-weight:700;color:var(--white);">The Gorilla Café</div>
+          <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--steel);margin-top:4px;">Order Confirmed</div>
+        </div>
+        <div style="padding:32px 36px;">
+          <div style="font-size:42px;text-align:center;margin-bottom:8px;">&#10003;</div>
+          <h2 style="font-family:'Georgia',serif;font-size:22px;font-weight:700;color:var(--navy);text-align:center;margin-bottom:8px;">Thank you, ${contact}.</h2>
+          <p style="font-size:13px;color:var(--label);text-align:center;line-height:1.7;margin-bottom:28px;">Your order has been received. A confirmation has been sent to your email — check your junk folder if you don’t see it within a few minutes.</p>
+          <div style="background:var(--cream);padding:16px 20px;margin-bottom:24px;border-left:3px solid var(--gold);">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;">
+              <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--label);">Reference</div><div style="font-size:13px;font-weight:700;color:var(--navy);margin-top:2px;">${ref}</div></div>
+              <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--label);">Company</div><div style="font-size:13px;font-weight:600;color:var(--navy);margin-top:2px;">${company}</div></div>
+              <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--label);">Date</div><div style="font-size:13px;color:var(--navy);margin-top:2px;">${dateFormatted}</div></div>
+              <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--label);">Time</div><div style="font-size:13px;color:var(--navy);margin-top:2px;">${time}</div></div>
+              <div style="grid-column:1/-1;"><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--label);">Total (inc. VAT)</div><div style="font-size:20px;font-weight:700;color:var(--navy);margin-top:2px;font-family:'Georgia',serif;">£${total.toFixed(2)}</div></div>
+            </div>
+          </div>
+          ${warning ? `<div style="background:#fff8e1;border-left:3px solid var(--gold);padding:10px 14px;font-size:12px;color:#7a5c00;margin-bottom:20px;">⚠ ${warning}</div>` : ''}
+          <p style="font-size:11px;color:var(--label);text-align:center;line-height:1.8;">Questions? <a href="mailto:Hammersmith.Cafe@Huddle.co.uk" style="color:var(--navy);font-weight:600;">Hammersmith.Cafe@Huddle.co.uk</a><br>Modifications must be made at least 48 hours before your event.</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── Large pastry individual selectors ────────────────────────────────────────
+const PASTRY_OPTIONS = ['Plain Croissant','Almond Croissant','Pain au Chocolat','Pain aux Raisins','Cinnamon Bun'];
+state.pastrySelections = [];
+
+function renderPastrySelectors() {
+  const container = document.getElementById('pastry-selectors');
+  if (!container) return;
+  const qty = state.alacarte['pastry'] || 0;
+  // Pad or trim selections array
+  while (state.pastrySelections.length < qty) state.pastrySelections.push('');
+  if (state.pastrySelections.length > qty) state.pastrySelections.splice(qty);
+  if (qty === 0) { container.innerHTML = ''; return; }
+  container.innerHTML = state.pastrySelections.map((sel, i) => `
+    <div style="display:flex;align-items:center;gap:6px;margin-top:5px;">
+      <span style="font-size:10px;font-weight:600;color:var(--label);white-space:nowrap;min-width:48px;">Pastry ${i+1}</span>
+      <select onchange="updatePastrySelection(${i}, this.value)"
+              style="flex:1;padding:5px 24px 5px 8px;border:1.5px solid var(--rule);background:var(--white) url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%276%27 viewBox=%270 0 10 6%27%3E%3Cpath d=%27M0 0l5 6 5-6z%27 fill=%27%230f1f3d%27/%3E%3C/svg%3E') no-repeat right 6px center;-webkit-appearance:none;appearance:none;font-family:'Inter',sans-serif;font-size:11px;color:var(--navy);">
+        <option value="">Select…</option>
+        ${PASTRY_OPTIONS.map(o => `<option value="${o}" ${sel===o?'selected':''}>${o}</option>`).join('')}
+      </select>
+    </div>
+  `).join('');
+}
+
+function updatePastrySelection(idx, val) {
+  state.pastrySelections[idx] = val;
+  updateSidebar();
+}
+
+// ── Salad bowl platters ───────────────────────────────────────────────────────
+const SALAD_OPTIONS = ['Pesto Pasta','Mixed Leaf & Squash','Greek Salad','Coleslaw'];
+state.saladRegPlatters = [];
+state.saladLrgPlatters = [];
+
+const SALAD_EXTRAS_OPTIONS = ['None','Grilled Chicken Skewer','Halloumi (2 pieces)','Baked Falafel (3 pieces)'];
+const SALAD_EXTRAS_COUNTS = { reg: 5, lrg: 10 };
+
+function renderSaladPlatters(type) {
+  const arr = type === 'reg' ? state.saladRegPlatters : state.saladLrgPlatters;
+  const extrasCount = SALAD_EXTRAS_COUNTS[type];
+  const container = document.getElementById(`salad-${type}-platters`);
+  if (!container) return;
+  const SELECT_STYLE = "flex:1;padding:5px 24px 5px 8px;border:1.5px solid var(--rule);background:var(--white) url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%276%27 viewBox=%270 0 10 6%27%3E%3Cpath d=%27M0 0l5 6 5-6z%27 fill=%27%230f1f3d%27/%3E%3C/svg%3E') no-repeat right 6px center;-webkit-appearance:none;appearance:none;font-family:'Inter',sans-serif;font-size:11px;color:var(--navy);";
+  container.innerHTML = arr.map((bowl, i) => `
+    <div style="border:1px solid var(--rule);padding:8px 10px;margin-top:6px;background:var(--cream);">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+        <span style="font-size:10px;font-weight:600;color:var(--label);white-space:nowrap;min-width:52px;">Bowl ${i+1}</span>
+        <select onchange="updateSaladPlatter('${type}', ${i}, 'salad', this.value)" style="${SELECT_STYLE}">
+          <option value="">Select salad…</option>
+          ${SALAD_OPTIONS.map(o => `<option value="${o}" ${bowl.salad===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-size:10px;font-weight:600;color:var(--label);white-space:nowrap;min-width:52px;">Extra (×${extrasCount})</span>
+        <select onchange="updateSaladPlatter('${type}', ${i}, 'extras', this.value)" style="${SELECT_STYLE}">
+          <option value="">Optional extra…</option>
+          ${SALAD_EXTRAS_OPTIONS.map(o => `<option value="${o}" ${bowl.extras===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateSaladPlatter(type, idx, field, val) {
+  const arr = type === 'reg' ? state.saladRegPlatters : state.saladLrgPlatters;
+  arr[idx][field] = val;
+  updateSidebar();
+}
+
+// ── Wrap platters ─────────────────────────────────────────────────────────────
+const WRAP_OPTIONS = ['Meat','Vegetarian'];
+state.wrapRegPlatters = [];
+state.wrapLrgPlatters = [];
+
+function renderWrapPlatters(type) {
+  const arr = type === 'reg' ? state.wrapRegPlatters : state.wrapLrgPlatters;
+  const container = document.getElementById(`wrap-${type}-platters`);
+  if (!container) return;
+  container.innerHTML = arr.map((sel, i) => `
+    <div style="display:flex;align-items:center;gap:6px;margin-top:5px;">
+      <span style="font-size:10px;font-weight:600;color:var(--label);white-space:nowrap;min-width:52px;">Platter ${i+1}</span>
+      <select onchange="updateWrapPlatter('${type}', ${i}, this.value)"
+              style="flex:1;padding:5px 24px 5px 8px;border:1.5px solid var(--rule);background:var(--white) url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%276%27 viewBox=%270 0 10 6%27%3E%3Cpath d=%27M0 0l5 6 5-6z%27 fill=%27%230f1f3d%27/%3E%3C/svg%3E') no-repeat right 6px center;-webkit-appearance:none;appearance:none;font-family:'Inter',sans-serif;font-size:11px;color:var(--navy);">
+        <option value="">Select type…</option>
+        ${WRAP_OPTIONS.map(o => `<option value="${o}" ${sel===o?'selected':''}>${o}</option>`).join('')}
+      </select>
+    </div>
+  `).join('');
+}
+
+function updateWrapPlatter(type, idx, val) {
+  if (type === 'reg') state.wrapRegPlatters[idx] = val;
+  else state.wrapLrgPlatters[idx] = val;
+  updateSidebar();
+}
+
+// ── Juice jugs ───────────────────────────────────────────────────────────────
+const JUICE_OPTIONS = ['Apple Juice','Orange Juice'];
+state.juiceJugs = [];
+
+function renderJuiceJugs() {
+  const container = document.getElementById('juice-jug-platters');
+  if (!container) return;
+  container.innerHTML = state.juiceJugs.map((sel, i) => `
+    <div style="display:flex;align-items:center;gap:6px;margin-top:5px;">
+      <span style="font-size:10px;font-weight:600;color:var(--label);white-space:nowrap;min-width:44px;">Jug ${i+1}</span>
+      <select onchange="updateJuiceJug(${i}, this.value)"
+              style="flex:1;padding:5px 24px 5px 8px;border:1.5px solid var(--rule);background:var(--white) url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%276%27 viewBox=%270 0 10 6%27%3E%3Cpath d=%27M0 0l5 6 5-6z%27 fill=%27%230f1f3d%27/%3E%3C/svg%3E') no-repeat right 6px center;-webkit-appearance:none;appearance:none;font-family:'Inter',sans-serif;font-size:11px;color:var(--navy);">
+        <option value="">Select flavour…</option>
+        ${JUICE_OPTIONS.map(o => `<option value="${o}" ${sel===o?'selected':''}>${o}</option>`).join('')}
+      </select>
+    </div>
+  `).join('');
+}
+
+function updateJuiceJug(idx, val) {
+  state.juiceJugs[idx] = val;
+  updateSidebar();
+}
+
+// ── Mini pastry platters ──────────────────────────────────────────────────────
+const MINI_PASTRY_OPTIONS = ['Plain Croissant','Pain aux Raisins','Pain au Chocolat'];
+state.miniPastryPlatters = [];
+
+function addMiniPastryPlatter() {
+  state.miniPastryPlatters.push('');
+  renderMiniPastryPlatters();
+  updateSidebar();
+}
+
+function removeMiniPastryPlatter(idx) {
+  state.miniPastryPlatters.splice(idx, 1);
+  renderMiniPastryPlatters();
+  updateSidebar();
+}
+
+function updateMiniPastryFlavour(idx, val) {
+  state.miniPastryPlatters[idx] = val;
+  updateSidebar();
+}
+
+function renderMiniPastryPlatters() {
+  const container = document.getElementById('minipastry-platters');
+  if (!container) return;
+  container.innerHTML = state.miniPastryPlatters.map((flavour, i) => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <span style="font-size:11px;font-weight:600;color:var(--label);white-space:nowrap;">Platter ${i+1}</span>
+      <select onchange="updateMiniPastryFlavour(${i}, this.value)"
+              style="flex:1;padding:6px 28px 6px 8px;border:1.5px solid var(--rule);background:var(--white) url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%276%27 viewBox=%270 0 10 6%27%3E%3Cpath d=%27M0 0l5 6 5-6z%27 fill=%27%230f1f3d%27/%3E%3C/svg%3E') no-repeat right 8px center;-webkit-appearance:none;appearance:none;font-family:'Inter',sans-serif;font-size:12px;color:var(--navy);">
+        <option value="">Select flavour…</option>
+        ${MINI_PASTRY_OPTIONS.map(o => `<option value="${o}" ${flavour===o?'selected':''}>${o}</option>`).join('')}
+      </select>
+      <button onclick="removeMiniPastryPlatter(${i})"
+              style="width:24px;height:24px;background:var(--navy);color:var(--white);border:none;cursor:pointer;font-size:14px;flex-shrink:0;">×</button>
+    </div>
+  `).join('');
+}
+
+// ── Celebration cakes ─────────────────────────────────────────────────────────
+const CAKE_OPTIONS = ['Triple Chocolate','Carrot & Walnut','Triple Layered Red Velvet','Lemon & Poppyseed','Orange & Polenta'];
+state.celebCakes = [];
+state.cakeMessage = '';
+
+function renderCelebCakes() {
+  const container = document.getElementById('celebcake-selections');
+  if (!container) return;
+  const SELECT_STYLE = "flex:1;padding:5px 24px 5px 8px;border:1.5px solid var(--rule);background:var(--white) url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%276%27 viewBox=%270 0 10 6%27%3E%3Cpath d=%27M0 0l5 6 5-6z%27 fill=%27%230f1f3d%27/%3E%3C/svg%3E') no-repeat right 6px center;-webkit-appearance:none;appearance:none;font-family:'Inter',sans-serif;font-size:11px;color:var(--navy);min-width:0;";
+  container.innerHTML = state.celebCakes.map((cake, i) => `
+    <div style="border:1px solid var(--rule);padding:8px 10px;margin-top:6px;background:var(--cream);">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+        <span style="font-size:10px;font-weight:600;color:var(--label);white-space:nowrap;min-width:48px;">Cake ${i+1}</span>
+        <select onchange="updateCelebCake(${i}, 'flavour', this.value)" style="${SELECT_STYLE}">
+          <option value="">Select flavour…</option>
+          ${CAKE_OPTIONS.map(o => `<option value="${o}" ${cake.flavour===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-size:10px;font-weight:600;color:var(--label);white-space:nowrap;min-width:48px;">Serving <span style="color:#c0392b;">*</span></span>
+        <select onchange="updateCelebCake(${i}, 'cut', this.value)"
+                style="${SELECT_STYLE}${!cake.cut ? 'border-color:#c0392b;' : ''}">
+          <option value="">Cut or uncut? (required)</option>
+          <option value="Uncut" ${cake.cut==='Uncut'?'selected':''}>Uncut</option>
+          <option value="Cut (14 slices)" ${cake.cut==='Cut (14 slices)'?'selected':''}>Cut (14 slices)</option>
+        </select>
+      </div>
+    </div>
+  `).join('');
+
+  // Show message field only if at least one cake is uncut (or not yet decided)
+  const anyUncut = state.celebCakes.some(c => c.cut !== 'Cut (14 slices)');
+  const messageSection = document.getElementById('cake-message-section');
+  if (messageSection) messageSection.style.display = (state.celebCakes.length > 0 && anyUncut) ? 'block' : 'none';
+}
+
+function updateCelebCake(idx, field, val) {
+  state.celebCakes[idx][field] = val;
+  renderCelebCakes();
+  updateSidebar();
+}
+
+function updateCakeMessage(val) {
+  state.cakeMessage = val;
+  const counter = document.getElementById('cake-message-count');
+  if (counter) {
+    counter.textContent = `${val.length} / 50`;
+    counter.style.color = val.length > 40 ? '#c0392b' : 'var(--label)';
+  }
+  updateSidebar();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+['breakfast','lunch','afternoon'].forEach(m => renderCustomers(m));
+updateSidebar();
+</script>
+</body>
+</html>
