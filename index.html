@@ -1594,29 +1594,41 @@ function submitOrder() {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Sending order…';
 
-  // Build a human-readable order summary for the GF entry
-  let orderSummary = `ORDER REFERENCE: ${orderRef}\n`;
-  orderSummary += `DATE: ${new Date(date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} at ${time}\n\n`;
+  // Build HTML order summary for the GF entry
+  const dateFormatted = new Date(date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  let orderSummary = '';
 
   items.forEach(item => {
-    orderSummary += `${item.label.toUpperCase()}\n`;
+    orderSummary += `<p style="margin:0 0 2px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;background:#222;color:#fff;padding:3px 8px;">${item.label}</p>`;
     if (item.customers) {
+      orderSummary += `<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;border:1px solid #ddd;border-top:none;">`;
       item.customers.forEach((c, i) => {
         const name = c.name || `Customer ${i+1}`;
-        orderSummary += `  ${name}: ${c.selections.join(' | ')}\n`;
+        const bg = i % 2 === 0 ? '#ffffff' : '#f9f9f9';
+        orderSummary += `<tr style="background:${bg};border-bottom:1px solid #eee;">
+          <td style="padding:5px 8px;font-size:10px;font-weight:700;color:#666;width:22px;text-align:center;">${i+1}</td>
+          <td style="padding:5px 8px;font-size:10px;font-weight:600;width:120px;">${name}</td>
+          <td style="padding:5px 8px;font-size:10px;color:#333;">${c.selections.join(' &nbsp;|&nbsp; ')}</td>
+        </tr>`;
       });
+      orderSummary += `</table>`;
     }
     if (item.lines) {
-      item.lines.forEach(l => { orderSummary += `  ${l}\n`; });
+      orderSummary += `<ul style="margin:0 0 10px;padding:6px 10px 6px 26px;background:#f9f9f9;border:1px solid #ddd;border-top:none;">`;
+      item.lines.forEach(l => {
+        orderSummary += `<li style="font-size:10px;color:#333;padding:2px 0;border-bottom:1px solid #eee;">${l}</li>`;
+      });
+      orderSummary += `</ul>`;
     }
-    orderSummary += '\n';
   });
 
-  orderSummary += `─────────────────────────\n`;
-  orderSummary += `Subtotal (ex. VAT): £${subtotal.toFixed(2)}\n`;
-  if (qualifiesDiscount) orderSummary += `10% Discount: −£${discount.toFixed(2)}\n`;
-  orderSummary += `VAT (20%): £${(discountedSub*0.2).toFixed(2)}\n`;
-  orderSummary += `TOTAL (inc. VAT): £${totalInc.toFixed(2)}\n`;
+  // Totals block
+  orderSummary += `<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:4px;border:1px solid #222;">`;
+  orderSummary += `<tr style="background:#f5f5f5;"><td style="padding:5px 10px;font-size:10px;">Subtotal (ex. VAT)</td><td align="right" style="padding:5px 10px;font-size:10px;font-weight:600;">£${subtotal.toFixed(2)}</td></tr>`;
+  if (qualifiesDiscount) orderSummary += `<tr style="background:#f0fff0;"><td style="padding:5px 10px;font-size:10px;color:#2a7a2a;">10% Discount</td><td align="right" style="padding:5px 10px;font-size:10px;font-weight:600;color:#2a7a2a;">−£${discount.toFixed(2)}</td></tr>`;
+  orderSummary += `<tr style="background:#f5f5f5;"><td style="padding:5px 10px;font-size:10px;">VAT (20%)</td><td align="right" style="padding:5px 10px;font-size:10px;font-weight:600;">£${(discountedSub*0.2).toFixed(2)}</td></tr>`;
+  orderSummary += `<tr style="background:#222;"><td style="padding:7px 10px;font-size:11px;font-weight:700;color:#fff;">TOTAL (inc. VAT)</td><td align="right" style="padding:7px 10px;font-size:13px;font-weight:700;color:#fff;">£${totalInc.toFixed(2)}</td></tr>`;
+  orderSummary += `</table>`;
 
   // Gravity Forms field IDs — update these to match your form field IDs
   // Check Forms → your form → field settings for each field's ID number
