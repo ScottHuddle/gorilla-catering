@@ -1629,14 +1629,14 @@ function submitOrder() {
   // Find them by editing each field in GF and checking "Field ID" in the sidebar
   const gfEntry = {
     'input_1':  company,       // Company / Office
-    'input_2':  contact,       // Contact Name
-    'input_3':  email,         // Email Address
-    'input_4':  date,          // Date Required (YYYY-MM-DD)
-    'input_5':  time,          // Time Required
-    'input_6':  orderSummary,  // Order Summary (paragraph)
-    'input_7':  notes,         // Dietary Notes (paragraph)
-    'input_8':  orderRef,      // Order Reference (hidden)
-    'input_9':  `£${totalInc.toFixed(2)}`, // Total (hidden)
+    'input_3':  contact,       // Contact Name
+    'input_4':  email,         // Email Address
+    'input_5':  date,          // Date Required (YYYY-MM-DD)
+    'input_6':  time,          // Time Required
+    'input_7':  orderSummary,  // Order Summary (paragraph)
+    'input_8':  notes,         // Dietary Notes (paragraph)
+    'input_9':  orderRef,      // Order Reference (hidden)
+    'input_10': `£${totalInc.toFixed(2)}`, // Total (hidden)
   };
 
   fetch(`${GF_BASE_URL}/forms/${GF_FORM_ID}/submissions`, {
