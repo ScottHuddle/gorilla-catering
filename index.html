@@ -570,11 +570,13 @@
         </div>
         <div class="field">
           <label>Date Required</label>
-          <input type="date" id="date-required">
+          <input type="date" id="date-required" onchange="handleDateChange()">
+          <div id="date-warning" style="display:none;margin-top:5px;font-size:11px;color:#c0392b;font-weight:600;">⚠ We only accept orders Monday to Friday.</div>
         </div>
         <div class="field">
           <label>Time Required</label>
-          <input type="time" id="time-required">
+          <input type="time" id="time-required" min="08:30" max="15:00" onchange="validateDateTime()">
+          <div id="time-warning" style="display:none;margin-top:5px;font-size:11px;color:#c0392b;font-weight:600;">⚠ Orders must be placed between 8:30am and 3:00pm.</div>
         </div>
         <div class="field field-full">
           <label>Dietary Requirements & Special Notes</label>
@@ -617,7 +619,7 @@
               <div class="set-name">Breakfast Set Menu</div>
               <div class="set-desc">Tea & coffee, fresh fruit juice & any large pastry &nbsp;·&nbsp; Served as individual portions</div>
             </div>
-            <div class="set-price">£8.50 pp</div>
+            <div class="set-price">£9.00 pp</div>
           </div>
 
           <div class="headcount-row">
@@ -904,7 +906,7 @@
               <div class="set-name">Afternoon Set Menu</div>
               <div class="set-desc">Tea & coffee with any cookie &nbsp;·&nbsp; Served as individual portions</div>
             </div>
-            <div class="set-price">£6.00 pp</div>
+            <div class="set-price">£7.00 pp</div>
           </div>
 
           <div class="headcount-row">
@@ -1072,36 +1074,36 @@
 const MENUS = {
   breakfast: {
     label: 'Breakfast Set Menu',
-    price: 8.50,
+    price: 9.00,
     fields: [
-      { id: 'pastry', label: 'Pastry', options: ['Plain Croissant','Almond Croissant','Pain au Chocolat','Pain aux Raisins','Cinnamon Bun'] },
-      { id: 'juice',  label: 'Juice',  options: ['Orange Juice','Apple Juice'] },
-      { id: 'hot',    label: 'Hot drink', options: ['Tea','Coffee','None'] },
+      { id: 'pastry', label: 'Pastry', options: ['Plain Croissant','Almond Croissant','Pain au Chocolat','Pain aux Raisins','Cinnamon Bun'], default: 'Plain Croissant' },
+      { id: 'juice',  label: 'Juice',  options: ['Orange Juice','Apple Juice'], default: 'Orange Juice' },
+      { id: 'hot',    label: 'Hot drink', options: ['Tea','Coffee','None'], default: 'Coffee' },
     ]
   },
   lunch: {
     label: 'Lunch Set Menu 1',
     price: 9.50,
     fields: [
-      { id: 'main',  label: 'Sandwich / Salad', options: ['Tarragon Chicken Wrap','BLT','Chicken Ciabatta','Mozzarella Focaccia','Harissa Falafel Wrap','Pesto Pasta','Mixed Leaf & Squash','Greek Salad','Coleslaw','Mixed Salad'] },
-      { id: 'crisps', label: 'Crisps', options: ['Salted','Cheese & Onion','Longhorn Beef','Salt & Vinegar','Sweet Chilli'] },
-      { id: 'drink',  label: 'Drink', options: ['Coke','Coke Zero','Diet Coke','Fanta','Sprite','Still Water','Sparkling Water'] },
+      { id: 'main',  label: 'Sandwich / Salad', options: ['Tarragon Chicken Wrap','BLT','Harissa Falafel Wrap','Pesto Pasta','Mixed Leaf & Squash','Greek Salad','Coleslaw','Mixed Salad'], default: 'Tarragon Chicken Wrap' },
+      { id: 'crisps', label: 'Crisps', options: ['Salted','Cheese & Onion','Longhorn Beef','Salt & Vinegar','Sweet Chilli'], default: 'Salted' },
+      { id: 'drink',  label: 'Drink', options: ['Coke','Coke Zero','Diet Coke','Fanta','Sprite','Still Water','Sparkling Water'], default: 'Still Water' },
     ]
   },
   lunch2: {
     label: 'Lunch Set Menu 2',
-    price: 9.50,
+    price: 10.00,
     fields: [
-      { id: 'main',   label: 'Sandwich / Salad', options: ['Tarragon Chicken Wrap','BLT','Chicken Ciabatta','Mozzarella Focaccia','Harissa Falafel Wrap','Pesto Pasta','Mixed Leaf & Squash','Greek Salad','Coleslaw','Mixed Salad'] },
+      { id: 'main',   label: 'Sandwich / Salad', options: ['Tarragon Chicken Wrap','BLT','Harissa Falafel Wrap','Pesto Pasta','Mixed Leaf & Squash','Greek Salad','Coleslaw','Mixed Salad'], default: 'Mixed Salad' },
       { id: 'cookie', label: 'Cookie', options: ['NY Style Pistachio','NY Style Chocolate Chip','Chocolate & Hazelnut','Oat & Raisin'] },
     ]
   },
   afternoon: {
     label: 'Afternoon Set Menu',
-    price: 6.00,
+    price: 7.00,
     fields: [
-      { id: 'cookie', label: 'Cookie', options: ['NY Style Pistachio','NY Style Chocolate Chip','Chocolate & Hazelnut','Oat & Raisin'] },
-      { id: 'hot',    label: 'Hot drink', options: ['Tea','Coffee'] },
+      { id: 'cookie', label: 'Cookie', options: ['NY Style Pistachio','NY Style Chocolate Chip','Chocolate & Hazelnut','Oat & Raisin'], default: 'Chocolate & Hazelnut' },
+      { id: 'hot',    label: 'Hot drink', options: ['Tea','Coffee'], default: 'Coffee' },
     ]
   }
 };
@@ -1168,9 +1170,15 @@ function changeCount(menu, delta) {
   const warning = document.getElementById(menu + '-min-warning');
   if (warning) warning.style.display = (next > 0 && next < 5) ? 'block' : 'none';
 
-  // Sync customer array
+  // Sync customer array — apply defaults to new customers
   const arr = state.customers[menu];
-  while (arr.length < next) arr.push({ name: '', selections: {} });
+  while (arr.length < next) {
+    const newCustomer = { name: '', selections: {} };
+    MENUS[menu].fields.forEach(f => {
+      if (f.default) newCustomer.selections[f.id] = f.default;
+    });
+    arr.push(newCustomer);
+  }
   if (arr.length > next) arr.splice(next);
   renderCustomers(menu);
   updateSidebar();
@@ -1498,6 +1506,24 @@ function submitOrder() {
     return;
   }
 
+  // Validate day and time
+  const dayOfWeek = new Date(date).getUTCDay();
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    alert('We only accept orders Monday to Friday. Please select a weekday.');
+    return;
+  }
+  const [submitH, submitM] = time.split(':').map(Number);
+  const mins = submitH * 60 + submitM;
+  if (mins < 8 * 60 + 30 || mins > 15 * 60) {
+    alert('Please select a time between 8:30am and 3:00pm.');
+    return;
+  }
+  const selectedDateTime = new Date(`${date}T${time}`);
+  if (selectedDateTime < new Date(Date.now() + 48 * 60 * 60 * 1000)) {
+    alert('We require at least 48 hours notice. Please select a later date or time.');
+    return;
+  }
+
   console.log('submitOrder fired — values:', {company, contact, email, date, time});
 
   // Validate cut/uncut on all celebration cakes
@@ -1632,9 +1658,9 @@ function submitOrder() {
   // IMPORTANT: replace the numbers on the left with your actual GF field IDs
   // Find them by editing each field in GF and checking "Field ID" in the sidebar
   // Convert time to 12hr format for GF time field
-  const [hrs, mins] = time.split(':');
-  const h = parseInt(hrs);
-  const gfTime = `${h % 12 || 12}:${mins} ${h >= 12 ? 'PM' : 'AM'}`;
+  const [hrs, gfMins] = time.split(':');
+  const gfH = parseInt(hrs);
+  const gfTime = `${gfH % 12 || 12}:${gfMins} ${gfH >= 12 ? 'PM' : 'AM'}`;
 
   const gfBody = new URLSearchParams({
     input_1:  company,
@@ -1695,7 +1721,7 @@ function showConfirmation(ref, company, contact, date, time, total, warning) {
         <div style="padding:32px 36px;">
           <div style="font-size:42px;text-align:center;margin-bottom:8px;">&#10003;</div>
           <h2 style="font-family:'Georgia',serif;font-size:22px;font-weight:700;color:var(--navy);text-align:center;margin-bottom:8px;">Thank you, ${contact}.</h2>
-          <p style="font-size:13px;color:var(--label);text-align:center;line-height:1.7;margin-bottom:28px;">Your order has been received. A confirmation has been sent to your email — check your junk folder if you don’t see it within a few minutes.</p>
+          <p style="font-size:13px;color:var(--label);text-align:center;line-height:1.7;margin-bottom:28px;">Your order request has been received. Your booking is <strong style="color:var(--navy);">not confirmed</strong> until you hear back from the café team — we’ll be in touch shortly. Check your junk folder if you don’t see our email within a few minutes.</p>
           <div style="background:var(--cream);padding:16px 20px;margin-bottom:24px;border-left:3px solid var(--gold);">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;">
               <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--label);">Reference</div><div style="font-size:13px;font-weight:700;color:var(--navy);margin-top:2px;">${ref}</div></div>
@@ -1922,7 +1948,81 @@ function updateCakeMessage(val) {
   updateSidebar();
 }
 
+function handleDateChange() {
+  const input = document.getElementById('date-required');
+  if (!input.value) return;
+  const d = new Date(input.value + 'T12:00:00');
+  const day = d.getUTCDay();
+  // If Saturday (6), jump to Monday (+2). If Sunday (0), jump to Monday (+1).
+  if (day === 6) {
+    d.setUTCDate(d.getUTCDate() + 2);
+    input.value = d.toISOString().split('T')[0];
+  } else if (day === 0) {
+    d.setUTCDate(d.getUTCDate() + 1);
+    input.value = d.toISOString().split('T')[0];
+  }
+  validateDateTime();
+}
+
+// ── Date / time validation ────────────────────────────────────────────────────
+function validateDateTime() {
+  const dateVal = document.getElementById('date-required').value;
+  const timeVal = document.getElementById('time-required').value;
+  const dateWarn = document.getElementById('date-warning');
+  const timeWarn = document.getElementById('time-warning');
+
+  if (dateVal) {
+    const day = new Date(dateVal).getUTCDay();
+    const isWeekend = day === 0 || day === 6;
+
+    // 48 hour check — combine date and time if both set, otherwise use noon as default
+    const timeForCheck = timeVal || '12:00';
+    const selectedDateTime = new Date(`${dateVal}T${timeForCheck}`);
+    const minAllowed = new Date(Date.now() + 48 * 60 * 60 * 1000);
+    const tooSoon = selectedDateTime < minAllowed;
+
+    if (isWeekend) {
+      dateWarn.textContent = '⚠ We only accept orders Monday to Friday.';
+      dateWarn.style.display = 'block';
+      document.getElementById('date-required').style.borderBottomColor = '#c0392b';
+    } else if (tooSoon) {
+      dateWarn.textContent = '⚠ We require at least 48 hours notice. Please select a later date.';
+      dateWarn.style.display = 'block';
+      document.getElementById('date-required').style.borderBottomColor = '#c0392b';
+    } else {
+      dateWarn.style.display = 'none';
+      document.getElementById('date-required').style.borderBottomColor = '';
+    }
+  }
+
+  if (timeVal) {
+    const [h, m] = timeVal.split(':').map(Number);
+    const mins = h * 60 + m;
+    const invalid = mins < 8 * 60 + 30 || mins > 15 * 60;
+    timeWarn.style.display = invalid ? 'block' : 'none';
+    document.getElementById('time-required').style.borderBottomColor = invalid ? '#c0392b' : '';
+
+    // Re-run date check when time changes (48hr window depends on both)
+    if (document.getElementById('date-required').value) {
+      const dateVal2 = document.getElementById('date-required').value;
+      const selected = new Date(`${dateVal2}T${timeVal}`);
+      const minAllowed2 = new Date(Date.now() + 48 * 60 * 60 * 1000);
+      const day2 = new Date(dateVal2).getUTCDay();
+      if (day2 !== 0 && day2 !== 6 && selected < minAllowed2) {
+        document.getElementById('date-warning').textContent = '⚠ We require at least 48 hours notice. Please select a later date or time.';
+        document.getElementById('date-warning').style.display = 'block';
+        document.getElementById('date-required').style.borderBottomColor = '#c0392b';
+      }
+    }
+  }
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
+// Set minimum selectable date to today + 2 days
+const minDate = new Date();
+minDate.setDate(minDate.getDate() + 2);
+const minDateStr = minDate.toISOString().split('T')[0];
+document.getElementById('date-required').setAttribute('min', minDateStr);
 ['breakfast','lunch','afternoon'].forEach(m => renderCustomers(m));
 updateSidebar();
 </script>
