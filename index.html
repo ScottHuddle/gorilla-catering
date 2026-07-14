@@ -1627,25 +1627,28 @@ function submitOrder() {
   // GF entry field mapping — keys are Gravity Forms field IDs
   // IMPORTANT: replace the numbers on the left with your actual GF field IDs
   // Find them by editing each field in GF and checking "Field ID" in the sidebar
-  const gfEntry = {
-    '1':  company,
-    '3':  contact,
-    '4':  email,
-    '5':  date,
-    '6':  time,
-    '7':  orderSummary,
-    '8':  notes,
-    '9':  orderRef,
-    '10': `£${totalInc.toFixed(2)}`,
-  };
+  // GF submissions endpoint requires form-encoded data
+  const formData = new FormData();
+  formData.append('1',  company);
+  formData.append('3',  contact);
+  formData.append('4',  email);
+  formData.append('5',  date);
+  formData.append('6',  time);
+  formData.append('7',  orderSummary);
+  formData.append('8',  notes);
+  formData.append('9',  orderRef);
+  formData.append('10', `£${totalInc.toFixed(2)}`);
+  formData.append('target_page', '0');
+  formData.append('source_page', '1');
+
+  console.log('Submitting to GF — company:', company, 'contact:', contact, 'email:', email);
 
   fetch(`${GF_BASE_URL}/forms/${GF_FORM_ID}/submissions`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': `Basic ${GF_AUTH}`
     },
-    body: JSON.stringify({ field_values: gfEntry, target_page: 0, source_page: 1 })
+    body: formData
   })
   .then(r => r.json())
   .then(res => {
@@ -1653,7 +1656,8 @@ function submitOrder() {
     if (res.is_valid || res.entry_id) {
       showConfirmation(orderRef, company, contact, date, time, totalInc, null);
     } else {
-      console.error('GF response:', res);
+      console.error('GF validation_messages:', JSON.stringify(res.validation_messages));
+      console.error('Full GF response:', JSON.stringify(res));
       alert('Something went wrong submitting your order. Please email Hammersmith.Cafe@Huddle.co.uk directly.');
       submitBtn.disabled = false;
       submitBtn.textContent = 'Review & Send Order';
