@@ -1629,7 +1629,7 @@ function submitOrder() {
   // GF entry field mapping — keys are Gravity Forms field IDs
   // IMPORTANT: replace the numbers on the left with your actual GF field IDs
   // Find them by editing each field in GF and checking "Field ID" in the sidebar
-  const gfBody = {
+  const gfBody = new URLSearchParams({
     input_1:  company,
     input_3:  contact,
     input_4:  email,
@@ -1639,17 +1639,20 @@ function submitOrder() {
     input_8:  notes,
     input_9:  orderRef,
     input_10: `£${totalInc.toFixed(2)}`,
-  };
+    gform_submit: GF_FORM_ID,
+    gform_target_page_number: '0',
+    gform_source_page_number: '1',
+  });
 
   console.log('Submitting to GF — company:', company, 'contact:', contact, 'email:', email);
 
   fetch(`${GF_BASE_URL}/forms/${GF_FORM_ID}/submissions`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
       'Authorization': `Basic ${GF_AUTH}`
     },
-    body: JSON.stringify(gfBody)
+    body: gfBody.toString()
   })
   .then(r => r.json())
   .then(res => {
