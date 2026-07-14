@@ -1594,32 +1594,31 @@ function submitOrder() {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Sending order…';
 
-  // Build condensed HTML order summary for GF café email
+  // Build plain text order summary — GF escapes HTML from field values
+  // so we keep this as clean readable text and style the container in GF
   const dateFormatted = new Date(date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   let orderSummary = '';
 
   items.forEach(item => {
-    orderSummary += `<p style="margin:0 0 2px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#555;border-bottom:1px solid #ddd;padding-bottom:2px;">${item.label}</p>`;
+    orderSummary += `\n${item.label.toUpperCase()}\n`;
+    orderSummary += `${'─'.repeat(40)}\n`;
     if (item.customers && item.customers.length) {
-      orderSummary += `<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:8px;">`;
       item.customers.forEach((c, i) => {
         const name = c.name || `Customer ${i+1}`;
-        // Remove label prefixes (e.g. "Sandwich / Salad: ") — just show the values
         const vals = c.selections.map(s => s.includes(': ') ? s.split(': ').slice(1).join(': ') : s).join(' · ');
-        orderSummary += `<tr><td style="padding:2px 0;font-size:11px;color:#333;width:110px;vertical-align:top;"><strong>${name}</strong></td><td style="padding:2px 0 2px 8px;font-size:11px;color:#333;">${vals}</td></tr>`;
+        orderSummary += `${(i+1).toString().padStart(2)}. ${name}: ${vals}\n`;
       });
-      orderSummary += `</table>`;
     }
     if (item.lines && item.lines.length) {
-      orderSummary += `<p style="margin:0 0 8px;font-size:11px;color:#333;line-height:1.7;">${item.lines.join('<br>')}</p>`;
+      item.lines.forEach(l => { orderSummary += `    ${l}\n`; });
     }
   });
 
-  // Totals — single compact line
-  orderSummary += `<p style="margin:8px 0 0;font-size:11px;color:#333;border-top:1px solid #111;padding-top:6px;">`;
-  orderSummary += `Subtotal: <strong>£${subtotal.toFixed(2)}</strong>`;
-  if (qualifiesDiscount) orderSummary += ` &nbsp;·&nbsp; Discount (10%): <strong>−£${discount.toFixed(2)}</strong>`;
-  orderSummary += ` &nbsp;·&nbsp; VAT: <strong>£${(discountedSub*0.2).toFixed(2)}</strong> &nbsp;·&nbsp; <strong>TOTAL: £${totalInc.toFixed(2)}</strong></p>`;
+  orderSummary += `\n${'─'.repeat(40)}\n`;
+  orderSummary += `Subtotal (ex. VAT):  £${subtotal.toFixed(2)}\n`;
+  if (qualifiesDiscount) orderSummary += `10% Discount:        -£${discount.toFixed(2)}\n`;
+  orderSummary += `VAT (20%):           £${(discountedSub*0.2).toFixed(2)}\n`;
+  orderSummary += `TOTAL (inc. VAT):    £${totalInc.toFixed(2)}\n`;
 
   // Gravity Forms field IDs — update these to match your form field IDs
   // Check Forms → your form → field settings for each field's ID number
