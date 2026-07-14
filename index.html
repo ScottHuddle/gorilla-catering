@@ -1521,6 +1521,22 @@ function submitOrder() {
   const notes = document.getElementById('notes').value.trim();
   const orderRef = `GC-${date.replace(/-/g,'')}-${company.substring(0,3).toUpperCase()}`;
 
+  // ── Calculate totals first ─────────────────────────────────────────────────
+  let subtotal = 0;
+  ['breakfast','lunch','lunch2','afternoon'].forEach(m => {
+    subtotal += state.counts[m] * MENUS[m].price;
+    state.customers[m].forEach(c => { if (c.selections['extras']) subtotal += 2.50; });
+  });
+  Object.entries(state.alacarte).filter(([,q])=>q>0).forEach(([k,q])=>{ subtotal += q * ALACARTE[k].price; });
+  state.saladRegPlatters.forEach(b => { if (b.extras && b.extras !== 'None') subtotal += 5 * 2.50; });
+  state.saladLrgPlatters.forEach(b => { if (b.extras && b.extras !== 'None') subtotal += 10 * 2.50; });
+  subtotal += state.celebCakes.length * 55.00;
+  const qualifiesDiscount = subtotal >= 200;
+  const discount = qualifiesDiscount ? subtotal * 0.10 : 0;
+  const discountedSub = subtotal - discount;
+  const vat = discountedSub * 0.20;
+  const totalInc = discountedSub * 1.20;
+
   // ── Build items array ─────────────────────────────────────────────────────
   const items = [];
 
@@ -1564,22 +1580,6 @@ function submitOrder() {
     if (state.cakeMessage && anyUncut) cakeLines.push(`Message: "${state.cakeMessage}"`);
     items.push({ type: 'cake', label: 'Celebration Cakes', lines: cakeLines });
   }
-
-  // ── Calculate totals ───────────────────────────────────────────────────────
-  let subtotal = 0;
-  ['breakfast','lunch','lunch2','afternoon'].forEach(m => {
-    subtotal += state.counts[m] * MENUS[m].price;
-    state.customers[m].forEach(c => { if (c.selections['extras']) subtotal += 2.50; });
-  });
-  Object.entries(state.alacarte).filter(([,q])=>q>0).forEach(([k,q])=>{ subtotal += q * ALACARTE[k].price; });
-  state.saladRegPlatters.forEach(b => { if (b.extras && b.extras !== 'None') subtotal += 5 * 2.50; });
-  state.saladLrgPlatters.forEach(b => { if (b.extras && b.extras !== 'None') subtotal += 10 * 2.50; });
-  subtotal += state.celebCakes.length * 55.00;
-  const qualifiesDiscount = subtotal >= 200;
-  const discount = qualifiesDiscount ? subtotal * 0.10 : 0;
-  const discountedSub = subtotal - discount;
-  const vat = discountedSub * 0.20;
-  const totalInc = discountedSub * 1.20;
 
   const payload = {
     company, contact, email, date, time, notes, orderRef, items,
