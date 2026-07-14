@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gorilla Café – Allergen Information</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:  #0f1f3d;
+    --navy-mid: #1a3060;
+    --steel: #9ab5d4;
+    --pale:  #c8d8e8;
+    --gold:  #f5c842;
+    --cream: #f7f5f0;
+    --rule:  #d8d2c8;
+    --label: #6b7b9a;
+    --white: #ffffff;
+    --contains: #0f1f3d;
+    --maycontain: #6b7b9a;
+    --missing-bg: #fff8e1;
+    --missing-border: #f5c842;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    background: var(--cream);
+    color: var(--navy);
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--navy);
+    padding: 20px 40px;
+    border-bottom: 3px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .site-header .cafe-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .site-header .page-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--steel);
+  }
+  .site-header .back-link {
+    font-size: 12px;
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 1px;
+  }
+
+  /* ── Page body ── */
+  .page-body {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* ── Intro ── */
+  .intro {
+    background: var(--navy);
+    color: var(--pale);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    border-left: 4px solid var(--gold);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .intro strong { color: var(--white); }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--navy);
+  }
+  .legend-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .legend-dot.contains { background: var(--navy); color: var(--white); }
+  .legend-dot.maycontain { background: var(--white); color: var(--navy); border: 2px solid var(--navy); }
+
+  /* ── Missing data notice ── */
+  .missing-notice {
+    background: var(--missing-bg);
+    border: 1.5px solid var(--missing-border);
+    border-left: 4px solid var(--missing-border);
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--navy);
+  }
+  .missing-notice strong { font-weight: 600; }
+  .missing-notice ul { margin-top: 6px; padding-left: 18px; }
+  .missing-notice li { margin-bottom: 2px; }
+
+  /* ── Section header ── */
+  .section-header {
+    background: var(--navy);
+    color: var(--steel);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    margin-bottom: 1px;
+    margin-top: 32px;
+  }
+  .section-header:first-of-type { margin-top: 0; }
+
+  /* ── Allergen table ── */
+  .allergen-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    background: var(--white);
+    min-width: 900px;
+  }
+
+  thead tr {
+    background: var(--navy-mid);
+  }
+
+  thead th {
+    padding: 8px 6px;
+    text-align: center;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pale);
+    border-right: 1px solid rgba(154,181,212,0.2);
+    white-space: nowrap;
+  }
+
+  thead th:first-child {
+    text-align: left;
+    padding-left: 14px;
+    min-width: 160px;
+    color: var(--white);
+    border-right: 1px solid rgba(154,181,212,0.3);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--rule);
+  }
+  tbody tr:nth-child(even) { background: var(--cream); }
+
+  tbody td {
+    padding: 8px 6px;
+    text-align: center;
+    border-right: 1px solid var(--rule);
+    font-size: 11px;
+    vertical-align: middle;
+  }
+
+  tbody td:first-child {
+    text-align: left;
+    padding-left: 14px;
+    font-weight: 500;
+    color: var(--navy);
+    border-right: 1px solid #c8c0b4;
+    font-size: 12px;
+  }
+
+  .c { /* contains */
+    display: inline-block;
+    width: 18px; height: 18px;
+    background: var(--navy);
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+  }
+
+  .mc { /* may contain */
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2px solid var(--navy);
+    border-radius: 50%;
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 14px;
+    text-align: center;
+  }
+
+  .nut-label {
+    display: block;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--label);
+    margin-top: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Missing data row styling */
+  tbody tr.missing td:first-child {
+    color: var(--label);
+    font-style: italic;
+  }
+  tbody tr.missing td {
+    background: var(--missing-bg);
+  }
+  .tbd {
+    font-size: 9px;
+    color: #b8900a;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── Date/source note ── */
+  .source-note {
+    font-size: 10px;
+    color: var(--label);
+    margin-top: 12px;
+    text-align: right;
+    font-style: italic;
+  }
+
+  @media (max-width: 700px) {
+    .site-header { padding: 16px 20px; }
+    .page-body { padding: 20px 12px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <div class="cafe-name">The Gorilla Café</div>
+    <div class="page-title">Allergen Information</div>
+  </div>
+  <a href="gorilla-cafe-order-form.html" class="back-link">← Back to Order Form</a>
+</header>
+
+<div class="page-body">
+
+  <div class="intro">
+    <strong>Important:</strong> This sheet details allergens present in our menu items. <strong>●</strong> = Contains &nbsp;|&nbsp; <strong>○</strong> = May Contain. All information is provided in good faith and is accurate as of the date shown. Our kitchen handles multiple allergens — if you have a severe allergy, please contact us directly before ordering. All prices exclude VAT.
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot contains">●</span> Contains</div>
+    <div class="legend-item"><span class="legend-dot maycontain">○</span> May Contain</div>
+  </div>
+
+  <div class="missing-notice" style="background:#e8f5e9;border-color:#27ae60;"><strong>✓ Allergen information complete</strong> — all menu items have been verified.</div>
+
+  <!-- Helper: allergen columns -->
+  <!-- CEL GLU CRU EGG FIS LUP MIL MOL MUS NUT PEA SES SOY SUL -->
+
+  <!-- ══ BREAKFAST ══ -->
+  <div class="section-header">Breakfast – Pastries</div>
+  <div class="allergen-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Celery</th><th>Gluten</th><th>Crustaceans</th><th>Eggs</th><th>Fish</th>
+          <th>Lupin</th><th>Milk</th><th>Molluscs</th><th>Mustard</th>
+          <th>Nuts</th><th>Peanuts</th><th>Sesame</th><th>Soya</th><th>Sulphites</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Plain Croissant</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Almond Croissant</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td><span class="mc">○</span><span class="nut-label">Almond</span></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Pain au Chocolat</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Pain aux Raisins</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Cinnamon Bun</td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td><span class="c">●</span></td>
+        </tr>
+                <tr>
+          <td>Mini Savoury Croissants</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td><span class="mc">○</span></td><td></td><td><span class="c">●</span></td><td></td><td><span class="mc">○</span></td><td><span class="mc">○</span><span class="nut-label">Almond, Hazelnut, Pistachio</span></td><td></td><td><span class="c">●</span></td><td><span class="mc">○</span></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ BREAKFAST – GRANOLA STATION ══ -->
+  <div class="section-header">Breakfast – Granola Station</div>
+  <div class="allergen-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Celery</th><th>Gluten</th><th>Crustaceans</th><th>Eggs</th><th>Fish</th>
+          <th>Lupin</th><th>Milk</th><th>Molluscs</th><th>Mustard</th>
+          <th>Nuts</th><th>Peanuts</th><th>Sesame</th><th>Soya</th><th>Sulphites</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Greek Yoghurt</td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Alpro Yoghurt</td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+        </tr>
+        <tr>
+          <td>Mixed Berries</td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Strawberry / Mango Puree</td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Fresh Apple &amp; Orange Juice</td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ BREAKFAST – HOT BREAKFAST ══ -->
+  <div class="section-header">Breakfast – Hot Breakfast Components</div>
+  <div class="allergen-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Celery</th><th>Gluten</th><th>Crustaceans</th><th>Eggs</th><th>Fish</th>
+          <th>Lupin</th><th>Milk</th><th>Molluscs</th><th>Mustard</th>
+          <th>Nuts</th><th>Peanuts</th><th>Sesame</th><th>Soya</th><th>Sulphites</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Lincolnshire Cocktail Sausage</td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td><span class="c">●</span></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>THIS Isn't Pork Sausages (Vegan)</td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td><span class="c">●</span></td>
+        </tr>
+        <tr>
+          <td>Scrambled Egg</td>
+          <td></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Smashed Avocado</td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Freshly Baked Focaccia</td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ BREAKFAST – SHARERS ══ -->
+  <div class="section-header">Breakfast – Extras / Sharers</div>
+  <div class="allergen-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Celery</th><th>Gluten</th><th>Crustaceans</th><th>Eggs</th><th>Fish</th>
+          <th>Lupin</th><th>Milk</th><th>Molluscs</th><th>Mustard</th>
+          <th>Nuts</th><th>Peanuts</th><th>Sesame</th><th>Soya</th><th>Sulphites</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Cinnamon Buns platter = same as individual Cinnamon Bun (12) from Galeta: Gluten ✓, Eggs ✓, Milk ✓ -->
+        <tr>
+          <td>Cinnamon Buns</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Mini Pastry Platter</td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+        </tr>
+                <tr>
+          <td>Jug of Juice</td>
+          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Tea &amp; Coffee – 3L</td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>Banana Bread</td>
+          <!-- Vegan Banana Loaf: Gluten ✓, Soya ✓ -->
+          <td></td><td><span class="c">●</span></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+        </tr>
+        <tr>
+          <td>Chocolate Mandarin Cake</td>
+          <!-- Mandarin & Choc Cake: Eggs ✓, Nuts MC Almond, Soya ✓ -->
+          <td></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td><span class="mc">○</span><span class="nut-label">Almond</span></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+        </tr>
+                <tr>
+          <td>Bowl of Crisps</td>
+          <td></td><td></td><td></td><td></td><td></td><td></td><td><span class="mc">○</span><span class="nut-label">Check packet</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ LUNCH – SET MENUS ══ -->
+  <div class="section-header">Lunch – Sandwiches &amp; Wraps</div>
+  <div class="allergen-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Celery</th><th>Gluten</th><th>Crustaceans</th><th>Eggs</th><th>Fish</th>
+          <th>Lupin</th><th>Milk</th><th>Molluscs</th><th>Mustard</th>
+          <th>Nuts</th><th>Peanuts</th><th>Sesame</th><th>Soya</th><th>Sulphites</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- BLT: from Hammersmith sheet — BLT Sandwich row (all blank there, pending real data) -->
+                <tr>
+          <td>BLT</td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+                <tr>
+          <td>Tarragon Chicken Wrap</td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+                <tr>
+          <td>Chicken Ciabatta</td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+                <tr>
+          <td>Mozzarella Focaccia</td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+                <tr>
+          <td>Harissa Falafel Wrap</td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-header">Lunch – Salads</div>
+  <div class="allergen-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Celery</th><th>Gluten</th><th>Crustaceans</th><th>Eggs</th><th>Fish</th>
+          <th>Lupin</th><th>Milk</th><th>Molluscs</th><th>Mustard</th>
+          <th>Nuts</th><th>Peanuts</th><th>Sesame</th><th>Soya</th><th>Sulphites</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Pesto Pasta from Hammersmith: all blank — TBC -->
+                <tr>
+          <td>Pesto Pasta</td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+                <tr>
+          <td>Mixed Leaf &amp; Squash</td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <!-- Greek Salad from Hammersmith: all blank — TBC -->
+                <tr>
+          <td>Greek Salad</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+                <tr>
+          <td>Coleslaw</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+                <tr>
+          <td>Mixed Salad</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td><td></td><td><span class="c">●</span></td><td></td><td></td><td></td><td></td><td><span class="c">●</span></td><td><span class="c">●</span></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-header">Lunch – Extras</div>
+  <div class="allergen-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Celery</th><th>Gluten</th><th>Crustaceans</th><th>Eggs</th><th>Fish</th>
+          <th>Lupin</th><th>Milk</th><th>Molluscs</th><th>Mustard</th>
+          <th>Nuts</th><th>Peanuts</th><th>Sesame</th><th>Soya</th><th>Sulphites</th>
+        </tr>
+      </thead>
+      <tbody>
+                <tr>
+          <td>Grilled Chicken Skewer</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+                <tr>
+          <td>Halloumi (2 pieces)</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+                <tr>
+          <td>Baked Falafel (3 pieces)</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><span class="c">●</span></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-header">Lunch – Platters</div>
+  <div class="allergen-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Celery</th><th>Gluten</th><th>Crustaceans</th><th>Eggs</th><th>Fish</th>
+          <th>Lupin</th><th>Milk</th><th>Molluscs</th><th>Mustard</th>
+          <th>Nuts</th><th>Peanuts</th><th>Sesame</th><th>Soya</th><th>Sulphites</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="missing">
+          <td>Regular Salad Bowl (5 servings)</td>
+          <td colspan="14" style="text-align:left;padding-left:12px;font-style:italic;color:var(--label);">Allergens vary by salad choice — see Salads section above</td>
+        </tr>
+        <tr class="missing">
+          <td>Large Salad Bowl (10 servings)</td>
+          <td colspan="14" style="text-align:left;padding-left:12px;font-style:italic;color:var(--label);">Allergens vary by salad choice — see Salads section above</td>
+        </tr>
+        <tr class="missing">
+          <td>Regular Wrap Platter (5 servings)</td>
+          <td colspan="14" style="text-align:left;padding-left:12px;font-style:italic;color:var(--label);">Allergens vary by Meat or Vegetarian selection — see Sandwiches &amp; Wraps above</td>
+        </tr>
+        <tr class="missing">
+          <td>Large Wrap Platter (10 servings)</td>
+          <td colspan="14" style="text-align:left;padding-left:12px;font-style:italic;color:var(--label);">Allergens vary by Meat or Vegetarian selection — see Sandwiches &amp; Wraps above</td>
+        </tr>
+                <tr>
+          <td>Bowl of Crisps (10 servings)</td>
+          <td></td><td></td><td></td><td></td><td></td><td></td><td><span class="mc">○</span><span class="nut-label">Check packet</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ AFTERNOON ══ -->
+  <div class="section-header">Afternoon – Cookies</div>
+  <div class="allergen-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Celery</th><th>Gluten</th><th>Crustaceans</th><th>Eggs</th><th>Fish</th>
+          <th>Lupin</th><th>Milk</th><th>Molluscs</th><th>Mustard</th>
+          <th>Nuts</th><th>Peanuts</th><th>Sesame</th><th>Soya</th><th>Sulphites</th>
+        </tr>
+      </thead>
+      <tbody>
+                <tr>
+          <td>NY Style Pistachio</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td><td></td><td><span class="c">●</span></td><td></td><td></td><td><span class="mc">○</span><span class="nut-label">Pistachio</span></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+        </tr>
+                <tr>
+          <td>NY Style Chocolate Chip</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td><td></td><td><span class="c">●</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+        </tr>
+        <tr>
+          <!-- Choc Hazelnut Cookie: Eggs ✓, Nuts MC Hazelnut -->
+          <td>Chocolate Hazelnut</td>
+          <td></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td></td><td></td><td></td>
+          <td><span class="mc">○</span><span class="nut-label">Hazelnut</span></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <!-- Oat & Raisin: Gluten ✓, Eggs ✓, Milk ✓ -->
+          <td>Oat &amp; Raisin</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-header">Afternoon – Sweet Platters</div>
+  <div class="allergen-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Celery</th><th>Gluten</th><th>Crustaceans</th><th>Eggs</th><th>Fish</th>
+          <th>Lupin</th><th>Milk</th><th>Molluscs</th><th>Mustard</th>
+          <th>Nuts</th><th>Peanuts</th><th>Sesame</th><th>Soya</th><th>Sulphites</th>
+        </tr>
+      </thead>
+      <tbody>
+                <tr>
+          <td>6 Mixed Cupcakes</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td><td></td><td><span class="c">●</span></td><td></td><td></td><td><span class="mc">○</span></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+        </tr>
+        <tr>
+          <!-- Mixed Doughnuts: Gluten ✓, Eggs ✓, Milk ✓, Soya ✓ -->
+          <td>5 Mixed Doughnuts</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+        </tr>
+        <tr>
+          <!-- Pastel De Nata: Gluten ✓, Eggs ✓, Milk ✓ -->
+          <td>8 Pastel De Nata</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+                <tr>
+          <td>5 Mixed Crodoughs</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td><td></td><td><span class="c">●</span></td><td></td><td></td><td><span class="mc">○</span></td><td></td><td></td><td><span class="c">●</span></td><td><span class="c">●</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ SPECIAL OCCASIONS ══ -->
+  <div class="section-header">Special Occasions – Celebration Cakes</div>
+  <div class="allergen-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Celery</th><th>Gluten</th><th>Crustaceans</th><th>Eggs</th><th>Fish</th>
+          <th>Lupin</th><th>Milk</th><th>Molluscs</th><th>Mustard</th>
+          <th>Nuts</th><th>Peanuts</th><th>Sesame</th><th>Soya</th><th>Sulphites</th>
+        </tr>
+      </thead>
+      <tbody>
+                <tr>
+          <td>Triple Chocolate</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td><td></td><td><span class="c">●</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+        </tr>
+        <tr>
+          <!-- Carrot Cake: Gluten ✓, Eggs ✓, Milk ✓, Nuts MC Walnut -->
+          <td>Carrot &amp; Walnut</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td><span class="mc">○</span><span class="nut-label">Walnut</span></td><td></td><td></td><td></td><td></td>
+        </tr>
+                <tr>
+          <td>Triple Layered Red Velvet</td>
+          <td></td><td><span class="c">●</span></td><td></td><td><span class="c">●</span></td><td></td><td></td><td><span class="c">●</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr>
+                <tr>
+          <td>Lemon &amp; Poppyseed</td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <!-- Orange Polenta Loaf: Eggs ✓, Milk ✓ -->
+          <td>Orange &amp; Polenta</td>
+          <td></td><td></td><td></td><td><span class="c">●</span></td><td></td>
+          <td></td><td><span class="c">●</span></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="source-note">Allergen data sourced from Galeta Products sheet (10/06/2025) and Huddle Café Hammersmith sheet (29/02/2024). Items marked TBC require updated allergen information.</p>
+
+</div>
+</body>
+</html>
