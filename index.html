@@ -1498,6 +1498,8 @@ function submitOrder() {
     return;
   }
 
+  console.log('submitOrder fired — values:', {company, contact, email, date, time});
+
   // Validate cut/uncut on all celebration cakes
   if (state.celebCakes.length > 0) {
     const missing = state.celebCakes.findIndex(c => !c.cut);
