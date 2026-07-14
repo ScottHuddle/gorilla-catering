@@ -1629,33 +1629,32 @@ function submitOrder() {
   // GF entry field mapping — keys are Gravity Forms field IDs
   // IMPORTANT: replace the numbers on the left with your actual GF field IDs
   // Find them by editing each field in GF and checking "Field ID" in the sidebar
-  // GF submissions endpoint requires form-encoded data
-  const formData = new FormData();
-  formData.append('1',  company);
-  formData.append('3',  contact);
-  formData.append('4',  email);
-  formData.append('5',  date);
-  formData.append('6',  time);
-  formData.append('7',  orderSummary);
-  formData.append('8',  notes);
-  formData.append('9',  orderRef);
-  formData.append('10', `£${totalInc.toFixed(2)}`);
-  formData.append('target_page', '0');
-  formData.append('source_page', '1');
+  const gfBody = {
+    input_1:  company,
+    input_3:  contact,
+    input_4:  email,
+    input_5:  date,
+    input_6:  time,
+    input_7:  orderSummary,
+    input_8:  notes,
+    input_9:  orderRef,
+    input_10: `£${totalInc.toFixed(2)}`,
+  };
 
   console.log('Submitting to GF — company:', company, 'contact:', contact, 'email:', email);
 
   fetch(`${GF_BASE_URL}/forms/${GF_FORM_ID}/submissions`, {
     method: 'POST',
     headers: {
+      'Content-Type': 'application/json',
       'Authorization': `Basic ${GF_AUTH}`
     },
-    body: formData
+    body: JSON.stringify(gfBody)
   })
   .then(r => r.json())
   .then(res => {
     // GF returns { is_valid: true, ... } on success
-    if (res.is_valid || res.entry_id) {
+    if (res.is_valid === true) {
       showConfirmation(orderRef, company, contact, date, time, totalInc, null);
     } else {
       console.error('GF validation_messages:', JSON.stringify(res.validation_messages));
