@@ -1501,30 +1501,64 @@ function submitOrder() {
   const date    = document.getElementById('date-required').value;
   const time    = document.getElementById('time-required').value;
 
-  if (!company || !contact || !email || !date || !time) {
-    alert('Please fill in your company, name, email, date and time before submitting.');
-    return;
+  // ── Field-by-field validation with inline errors ───────────────────────────
+  // Clear any previous errors
+  document.querySelectorAll('.field-error').forEach(el => el.remove());
+  document.querySelectorAll('.field input, .field select, .field textarea').forEach(el => {
+    el.style.borderBottomColor = '';
+    el.style.borderColor = '';
+  });
+
+  const errors = [];
+
+  function fieldError(inputId, message) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.style.borderBottomColor = '#c0392b';
+    input.style.borderColor = '#c0392b';
+    let err = input.parentElement.querySelector('.field-error');
+    if (!err) {
+      err = document.createElement('div');
+      err.className = 'field-error';
+      err.style.cssText = 'font-size:11px;color:#c0392b;font-weight:600;margin-top:4px;';
+      input.parentElement.appendChild(err);
+    }
+    err.textContent = '⚠ ' + message;
+    errors.push(message);
   }
 
-  // Validate day and time
-  const dayOfWeek = new Date(date).getUTCDay();
-  if (dayOfWeek === 0 || dayOfWeek === 6) {
-    alert('We only accept orders Monday to Friday. Please select a weekday.');
-    return;
-  }
-  const [submitH, submitM] = time.split(':').map(Number);
-  const mins = submitH * 60 + submitM;
-  if (mins < 8 * 60 + 30 || mins > 15 * 60) {
-    alert('Please select a time between 8:30am and 3:00pm.');
-    return;
-  }
-  const selectedDateTime = new Date(`${date}T${time}`);
-  if (selectedDateTime < new Date(Date.now() + 48 * 60 * 60 * 1000)) {
-    alert('We require at least 48 hours notice. Please select a later date or time.');
-    return;
+  if (!company)  fieldError('company',       'Please enter your company or office name.');
+  if (!contact)  fieldError('contact',        'Please enter a contact name.');
+  if (!email || !/\S+@\S+\.\S+/.test(email)) fieldError('email', 'Please enter a valid email address.');
+  if (!date)     fieldError('date-required',  'Please select a date.');
+  if (!time)     fieldError('time-required',  'Please select a time.');
+
+  if (date) {
+    const dayOfWeek = new Date(date).getUTCDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      fieldError('date-required', 'We only accept orders Monday to Friday.');
+    } else {
+      const selectedDateTime = new Date(`${date}T${time || '12:00'}`);
+      if (selectedDateTime < new Date(Date.now() + 48 * 60 * 60 * 1000)) {
+        fieldError('date-required', 'We require at least 48 hours notice. Please choose a later date.');
+      }
+    }
   }
 
-  console.log('submitOrder fired — values:', {company, contact, email, date, time});
+  if (time) {
+    const [submitH, submitM] = time.split(':').map(Number);
+    const mins = submitH * 60 + submitM;
+    if (mins < 8 * 60 + 30 || mins > 15 * 60) {
+      fieldError('time-required', 'Please select a time between 8:30am and 3:00pm.');
+    }
+  }
+
+  if (errors.length > 0) {
+    // Scroll to first error
+    const firstError = document.querySelector('.field-error');
+    if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
 
   // Validate cut/uncut on all celebration cakes
   if (state.celebCakes.length > 0) {
