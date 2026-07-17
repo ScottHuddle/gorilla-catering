@@ -594,7 +594,7 @@
 
     <!-- Policy strip -->
     <div class="policy-strip">
-      <p>Available Mon–Fri 8:30am–3pm &nbsp;·&nbsp; Minimum 48 hours notice &nbsp;·&nbsp; All prices exclude VAT</p>
+      <p>Available Mon–Fri 8:30am–3pm &nbsp;·&nbsp; Minimum 48 business hours notice (weekends excluded) &nbsp;·&nbsp; All prices exclude VAT</p>
       <p style="margin-top:4px">Modifications can be made up until 48 hours before the event. Cancellations within 48 hours will be charged at 50%.</p>
       <p style="margin-top:4px">All food will be served in disposable or compostable packaging.</p>
     </div>
@@ -1005,7 +1005,7 @@
           <div class="set-menu-info" style="background:var(--navy-mid);border-left:3px solid var(--gold);">
             <div>
               <div class="set-name" style="color:var(--white);">Special Occasions</div>
-              <div class="set-desc" style="color:var(--steel);">Celebration cakes · Minimum 48 hours notice</div>
+              <div class="set-desc" style="color:var(--steel);">Celebration cakes · Minimum 48 business hours notice (weekends excluded)</div>
             </div>
           </div>
 
@@ -1533,15 +1533,17 @@ function submitOrder() {
   if (!date)     fieldError('date-required',  'Please select a date.');
   if (!time)     fieldError('time-required',  'Please select a time.');
 
-  if (date) {
-    const dayOfWeek = new Date(date).getUTCDay();
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
-      fieldError('date-required', 'We only accept orders Monday to Friday.');
-    } else {
-      const selectedDateTime = new Date(`${date}T${time || '12:00'}`);
-      if (selectedDateTime < new Date(Date.now() + 48 * 60 * 60 * 1000)) {
-        fieldError('date-required', 'We require at least 48 hours notice. Please choose a later date.');
-      }
+  if (date && time) {
+    const selectedDateTime = new Date(`${date}T${time}`);
+    const earliestAllowed = addBusinessHours(new Date(), 48);
+    if (selectedDateTime < earliestAllowed) {
+      fieldError('date-required', 'We require at least 48 business hours notice (weekends excluded). Please choose a later date.');
+    }
+  } else if (date) {
+    const selectedDateTime = new Date(`${date}T12:00`);
+    const earliestAllowed = addBusinessHours(new Date(), 48);
+    if (selectedDateTime < earliestAllowed) {
+      fieldError('date-required', 'We require at least 48 business hours notice (weekends excluded). Please choose a later date.');
     }
   }
 
@@ -1982,6 +1984,18 @@ function updateCakeMessage(val) {
   updateSidebar();
 }
 
+// ── Business hours helper ─────────────────────────────────────────────────────
+function addBusinessHours(fromDate, hours) {
+  let remaining = hours * 60;
+  let current = new Date(fromDate);
+  while (remaining > 0) {
+    current.setMinutes(current.getMinutes() + 1);
+    const day = current.getDay();
+    if (day !== 0 && day !== 6) remaining--;
+  }
+  return current;
+}
+
 function handleDateChange() {
   const input = document.getElementById('date-required');
   if (!input.value) return;
@@ -2009,18 +2023,17 @@ function validateDateTime() {
     const day = new Date(dateVal).getUTCDay();
     const isWeekend = day === 0 || day === 6;
 
-    // 48 hour check — combine date and time if both set, otherwise use noon as default
     const timeForCheck = timeVal || '12:00';
     const selectedDateTime = new Date(`${dateVal}T${timeForCheck}`);
-    const minAllowed = new Date(Date.now() + 48 * 60 * 60 * 1000);
-    const tooSoon = selectedDateTime < minAllowed;
+    const earliestAllowed = addBusinessHours(new Date(), 48);
+    const tooSoon = selectedDateTime < earliestAllowed;
 
     if (isWeekend) {
       dateWarn.textContent = '⚠ We only accept orders Monday to Friday.';
       dateWarn.style.display = 'block';
       document.getElementById('date-required').style.borderBottomColor = '#c0392b';
     } else if (tooSoon) {
-      dateWarn.textContent = '⚠ We require at least 48 hours notice. Please select a later date.';
+      dateWarn.textContent = '⚠ We require at least 48 business hours notice (weekends excluded). Please choose a later date.';
       dateWarn.style.display = 'block';
       document.getElementById('date-required').style.borderBottomColor = '#c0392b';
     } else {
@@ -2036,14 +2049,14 @@ function validateDateTime() {
     timeWarn.style.display = invalid ? 'block' : 'none';
     document.getElementById('time-required').style.borderBottomColor = invalid ? '#c0392b' : '';
 
-    // Re-run date check when time changes (48hr window depends on both)
+    // Re-run date check when time changes
     if (document.getElementById('date-required').value) {
       const dateVal2 = document.getElementById('date-required').value;
       const selected = new Date(`${dateVal2}T${timeVal}`);
-      const minAllowed2 = new Date(Date.now() + 48 * 60 * 60 * 1000);
+      const earliest = addBusinessHours(new Date(), 48);
       const day2 = new Date(dateVal2).getUTCDay();
-      if (day2 !== 0 && day2 !== 6 && selected < minAllowed2) {
-        document.getElementById('date-warning').textContent = '⚠ We require at least 48 hours notice. Please select a later date or time.';
+      if (day2 !== 0 && day2 !== 6 && selected < earliest) {
+        document.getElementById('date-warning').textContent = '⚠ We require at least 48 business hours notice (weekends excluded). Please choose a later date or time.';
         document.getElementById('date-warning').style.display = 'block';
         document.getElementById('date-required').style.borderBottomColor = '#c0392b';
       }
