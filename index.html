@@ -793,7 +793,7 @@
                 <div class="set-name">Lunch Set Menu 2</div>
                 <div class="set-desc">Sandwich or salad & cookie · Served as individual portions</div>
               </div>
-              <div class="set-price">£9.50 pp</div>
+              <div class="set-price">£10.00 pp</div>
             </div>
 
             <div class="headcount-row">
@@ -1573,7 +1573,7 @@ function submitOrder() {
   }
 
   let hasOrder = false;
-  ['breakfast','lunch','afternoon'].forEach(m => { if (state.counts[m] > 0) hasOrder = true; });
+  ['breakfast','lunch','lunch2','afternoon'].forEach(m => { if (state.counts[m] > 0) hasOrder = true; });
   Object.values(state.alacarte).forEach(q => { if (q > 0) hasOrder = true; });
 
   if (!hasOrder) {
