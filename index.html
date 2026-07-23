@@ -1698,6 +1698,12 @@ function submitOrder() {
   const gfH = parseInt(hrs);
   const gfTime = `${gfH % 12 || 12}:${gfMins} ${gfH >= 12 ? 'PM' : 'AM'}`;
 
+  // Calculate week number (ISO week)
+  const submissionDate = new Date(date);
+  const startOfYear = new Date(submissionDate.getFullYear(), 0, 1);
+  const weekNum = Math.ceil(((submissionDate - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
+  const weekLabel = `W${weekNum} ${submissionDate.getFullYear()}`;
+
   const gfBody = new URLSearchParams({
     input_1:  company,
     input_3:  contact,
@@ -1708,6 +1714,8 @@ function submitOrder() {
     input_8:  notes,
     input_9:  orderRef,
     input_10: `£${totalInc.toFixed(2)}`,
+    input_11: `£${discountedSub.toFixed(2)}`,
+    input_12: weekLabel,
     gform_submit: GF_FORM_ID,
     gform_target_page_number: '0',
     gform_source_page_number: '1',
