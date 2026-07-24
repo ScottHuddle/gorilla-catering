@@ -1581,6 +1581,20 @@ function submitOrder() {
     return;
   }
 
+  // Check set menus meet the 5 person minimum
+  const menuMinimumErrors = [];
+  const menuNames = { breakfast: 'Breakfast Set Menu', lunch: 'Lunch Set Menu 1', lunch2: 'Lunch Set Menu 2', afternoon: 'Afternoon Set Menu' };
+  ['breakfast','lunch','lunch2','afternoon'].forEach(m => {
+    const count = state.counts[m];
+    if (count > 0 && count < 5) {
+      menuMinimumErrors.push(`${menuNames[m]} requires a minimum of 5 people (currently ${count}).`);
+    }
+  });
+  if (menuMinimumErrors.length > 0) {
+    alert('Please check the following:\n\n' + menuMinimumErrors.join('\n'));
+    return;
+  }
+
   // ── Build structured order payload ────────────────────────────────────────
   const notes = document.getElementById('notes').value.trim();
   const orderRef = `GC-${date.replace(/-/g,'')}-${company.substring(0,3).toUpperCase()}`;
