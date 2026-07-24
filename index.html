@@ -1728,18 +1728,41 @@ function submitOrder() {
   const weekNum = Math.ceil(((submissionDate - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
   const weekLabel = `W${weekNum} ${submissionDate.getFullYear()}`;
 
+  // Build per-customer summary for client email (field 13)
+  let customerSummary = '';
+  items.forEach(item => {
+    customerSummary += `\n${item.label.toUpperCase()}\n`;
+    customerSummary += `${'─'.repeat(36)}\n`;
+    if (item.customers && item.customers.length) {
+      item.customers.forEach((c, i) => {
+        const name = c.name || `Customer ${i+1}`;
+        const vals = c.selections.map(s => s.includes(': ') ? s.split(': ').slice(1).join(': ') : s).join(' · ');
+        customerSummary += `${(i+1).toString().padStart(2)}. ${name}: ${vals}\n`;
+      });
+    }
+    if (item.lines && !item.customers) {
+      item.lines.forEach(l => { customerSummary += `  ${l}\n`; });
+    }
+  });
+  customerSummary += `\n${'─'.repeat(36)}\n`;
+  customerSummary += `Subtotal (ex. VAT):  £${subtotal.toFixed(2)}\n`;
+  if (qualifiesDiscount) customerSummary += `10% Discount:        -£${discount.toFixed(2)}\n`;
+  customerSummary += `VAT (20%):           £${(discountedSub*0.2).toFixed(2)}\n`;
+  customerSummary += `TOTAL (inc. VAT):    £${totalInc.toFixed(2)}\n`;
+
   const gfBody = new URLSearchParams({
     input_1:  company,
     input_3:  contact,
     input_4:  email,
     input_5:  date,
     input_6:  gfTime,
-    input_7:  orderSummary,
+    input_7:  orderSummary,    // grouped by product — for café email
     input_8:  notes,
     input_9:  orderRef,
     input_10: `£${totalInc.toFixed(2)}`,
     input_11: `£${discountedSub.toFixed(2)}`,
     input_12: weekLabel,
+    input_13: customerSummary, // per-customer breakdown — for client email
     gform_submit: GF_FORM_ID,
     gform_target_page_number: '0',
     gform_source_page_number: '1',
