@@ -1601,13 +1601,40 @@ function submitOrder() {
   const vat = discountedSub * 0.20;
   const totalInc = discountedSub * 1.20;
 
-  // ── Build items array ─────────────────────────────────────────────────────
+  // ── Build items array (grouped by selection type for café) ───────────────
   const items = [];
 
   ['breakfast','lunch','lunch2','afternoon'].forEach(menu => {
     const count = state.counts[menu];
     if (!count) return;
     const menuData = MENUS[menu];
+
+    // Group each field's selections by value — e.g. { 'Tarragon Wrap': 3, 'BLT': 2 }
+    const grouped = {};
+    menuData.fields.forEach(f => { grouped[f.label] = {}; });
+    if (SALAD_MAINS) grouped['Extra'] = {};
+
+    state.customers[menu].forEach(c => {
+      menuData.fields.forEach(f => {
+        const val = c.selections[f.id] || 'Not selected';
+        grouped[f.label][val] = (grouped[f.label][val] || 0) + 1;
+      });
+      if (c.selections['extras']) {
+        grouped['Extra'][c.selections['extras']] = (grouped['Extra'][c.selections['extras']] || 0) + 1;
+      }
+    });
+
+    // Build lines from grouped counts
+    const lines = [];
+    Object.entries(grouped).forEach(([fieldLabel, counts]) => {
+      const entries = Object.entries(counts).filter(([,n]) => n > 0);
+      if (!entries.length) return;
+      entries.forEach(([val, n]) => {
+        lines.push(`${n}× ${val}${fieldLabel === 'Extra' ? ' (extra +£2.50)' : ''}`);
+      });
+    });
+
+    // Also keep per-customer detail for client email
     const customers = state.customers[menu].map((c, i) => ({
       name: c.name || '',
       selections: [
@@ -1615,7 +1642,13 @@ function submitOrder() {
         ...(c.selections['extras'] ? [`Extra: ${c.selections['extras']} (+£2.50)`] : [])
       ]
     }));
-    items.push({ type: 'menu', label: `${menuData.label} × ${count}`, customers });
+
+    items.push({
+      type: 'menu',
+      label: `${menuData.label} × ${count}`,
+      lines,      // grouped summary for café email
+      customers   // per-customer detail for client email
+    });
   });
 
   const alaLines = [];
@@ -1656,27 +1689,18 @@ function submitOrder() {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Sending order…';
 
-  // Build plain text order summary — GF escapes HTML from field values
-  // so we keep this as clean readable text and style the container in GF
+  // Build plain text order summary — grouped by item type for café
   const dateFormatted = new Date(date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   let orderSummary = '';
 
   items.forEach(item => {
     orderSummary += `\n${item.label.toUpperCase()}\n`;
-    orderSummary += `${'─'.repeat(40)}\n`;
-    if (item.customers && item.customers.length) {
-      item.customers.forEach((c, i) => {
-        const name = c.name || `Customer ${i+1}`;
-        const vals = c.selections.map(s => s.includes(': ') ? s.split(': ').slice(1).join(': ') : s).join(' · ');
-        orderSummary += `${(i+1).toString().padStart(2)}. ${name}: ${vals}\n`;
-      });
-    }
-    if (item.lines && item.lines.length) {
-      item.lines.forEach(l => { orderSummary += `    ${l}\n`; });
-    }
+    orderSummary += `${'─'.repeat(36)}\n`;
+    const displayLines = item.lines || [];
+    displayLines.forEach(l => { orderSummary += `  ${l}\n`; });
   });
 
-  orderSummary += `\n${'─'.repeat(40)}\n`;
+  orderSummary += `\n${'─'.repeat(36)}\n`;
   orderSummary += `Subtotal (ex. VAT):  £${subtotal.toFixed(2)}\n`;
   if (qualifiesDiscount) orderSummary += `10% Discount:        -£${discount.toFixed(2)}\n`;
   orderSummary += `VAT (20%):           £${(discountedSub*0.2).toFixed(2)}\n`;
