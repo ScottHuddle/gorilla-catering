@@ -1728,27 +1728,27 @@ function submitOrder() {
   const weekNum = Math.ceil(((submissionDate - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
   const weekLabel = `W${weekNum} ${submissionDate.getFullYear()}`;
 
-  // Build per-customer summary for client email (field 13)
+  // Build per-customer summary for client email (field 13) — use <br> not \n as GF strips newlines
   let customerSummary = '';
   items.forEach(item => {
-    customerSummary += `\n${item.label.toUpperCase()}\n`;
-    customerSummary += `${'─'.repeat(36)}\n`;
+    customerSummary += `<strong>${item.label.toUpperCase()}</strong><br>`;
     if (item.customers && item.customers.length) {
       item.customers.forEach((c, i) => {
         const name = c.name || `Customer ${i+1}`;
-        const vals = c.selections.map(s => s.includes(': ') ? s.split(': ').slice(1).join(': ') : s).join(' · ');
-        customerSummary += `${(i+1).toString().padStart(2)}. ${name}: ${vals}\n`;
+        const vals = c.selections.map(s => s.includes(': ') ? s.split(': ').slice(1).join(': ') : s).join(' &middot; ');
+        customerSummary += `${i+1}. <strong>${name}</strong>: ${vals}<br>`;
       });
     }
     if (item.lines && !item.customers) {
-      item.lines.forEach(l => { customerSummary += `  ${l}\n`; });
+      item.lines.forEach(l => { customerSummary += `&nbsp;&nbsp;${l}<br>`; });
     }
+    customerSummary += `<br>`;
   });
-  customerSummary += `\n${'─'.repeat(36)}\n`;
-  customerSummary += `Subtotal (ex. VAT):  £${subtotal.toFixed(2)}\n`;
-  if (qualifiesDiscount) customerSummary += `10% Discount:        -£${discount.toFixed(2)}\n`;
-  customerSummary += `VAT (20%):           £${(discountedSub*0.2).toFixed(2)}\n`;
-  customerSummary += `TOTAL (inc. VAT):    £${totalInc.toFixed(2)}\n`;
+  customerSummary += `<hr style="border:none;border-top:1px solid #ddd;margin:4px 0;">`;
+  customerSummary += `Subtotal (ex. VAT): <strong>£${subtotal.toFixed(2)}</strong><br>`;
+  if (qualifiesDiscount) customerSummary += `10% Discount: <strong>-£${discount.toFixed(2)}</strong><br>`;
+  customerSummary += `VAT (20%): <strong>£${(discountedSub*0.2).toFixed(2)}</strong><br>`;
+  customerSummary += `<strong>TOTAL (inc. VAT): £${totalInc.toFixed(2)}</strong>`;
 
   const gfBody = new URLSearchParams({
     input_1:  company,
