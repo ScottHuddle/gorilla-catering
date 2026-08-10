@@ -1797,6 +1797,31 @@ function submitOrder() {
   .then(res => {
     // GF returns { is_valid: true, ... } on success
     if (res.is_valid === true) {
+      // ── Post to Airtable ────────────────────────────────────────────────
+      const atFields = {
+        'Order Ref':        orderRef,
+        'Café':             'The Gorilla Café',
+        'Company':          company,
+        'Contact':          contact,
+        'Email':            email,
+        'Date Required':    date,
+        'Time':             time,
+        'Week':             weekLabel,
+        'Total (ex. VAT)':  parseFloat(discountedSub.toFixed(2)),
+        'Total (inc. VAT)': parseFloat(totalInc.toFixed(2)),
+        'Status':           'Pending',
+        'Order Summary':    orderSummary,
+        'Notes':            notes,
+      };
+      fetch('https://api.airtable.com/v0/appXTrO2cD4RLZz5Y/tblK0HWr5bww4oQtd', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer patCyExCvkqn5HFmn.0bbcad7eec711c9b509b0033fc1312b355e4b0202d27e18bf3ebde61264823ba',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ fields: atFields })
+      }).catch(e => console.warn('Airtable log failed:', e));
+      // ────────────────────────────────────────────────────────────────────
       showConfirmation(orderRef, company, contact, date, time, totalInc, null);
     } else {
       console.error('GF validation_messages:', JSON.stringify(res.validation_messages));
